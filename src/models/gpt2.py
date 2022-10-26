@@ -30,13 +30,7 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
         new_config.is_flat = False
 
         self.prefix_len = new_config.prefix_len
-        self.n_layer = config.num_hidden_layers
-        self.n_head = config.num_attention_heads
-        self.n_embd = config.hidden_size // config.num_attention_heads
-
-        self.prefix_tokens = torch.arange(self.prefix_len).long()
         self.prefix_encoder = PrefixEncoder(new_config)
-        self.dropout = torch.nn.Dropout(new_config.prefix_dropout_prob)
 
         # Model parallel
         self.model_parallel = False
@@ -44,20 +38,6 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
 
         # Initialize weights and apply final processing
         self.post_init()
-    
-    def get_prompt(self, batch_size):
-        prefix_tokens = self.prefix_tokens.unsqueeze(0).expand(batch_size, -1).to(self.transformer.device)
-        past_key_values = self.prefix_encoder(prefix_tokens)
-        past_key_values = past_key_values.view(
-            batch_size,
-            self.prefix_len,
-            self.n_layer * 2, 
-            self.n_head,
-            self.n_embd
-        )
-        past_key_values = self.dropout(past_key_values)
-        past_key_values = past_key_values.permute([2, 0, 3, 1, 4]).split(2)
-        return past_key_values
 
     def parallelize(self, device_map=None):
         self.device_map = (
@@ -109,7 +89,7 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
             position_ids = None
         
         if past is None:
-            past = self.get_prompt(batch_size=batch_size)
+            past = self.prefix_encoder(batch_size=batch_size)
             position_ids = position_ids[:, self.prefix_len:]
                 
         return {
@@ -145,7 +125,7 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
         
         if past_key_values is None:
             batch_size = input_ids.shape[0]
-            past_key_values = self.get_prompt(batch_size=batch_size)
+            past_key_values = self.prefix_encoder(batch_size=batch_size)
             prefix_attention_mask = torch.ones(batch_size, self.prefix_len).to(self.transformer.device)
             attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
             position_ids = attention_mask.long().cumsum(-1) - 1
