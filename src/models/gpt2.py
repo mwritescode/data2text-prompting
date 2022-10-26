@@ -90,7 +90,8 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
         
         if past is None:
             past = self.prefix_encoder(batch_size=batch_size)
-            position_ids = position_ids[:, self.prefix_len:]
+            if position_ids is not None:
+                position_ids = position_ids[:, self.prefix_len:]
                 
         return {
             "input_ids": input_ids,
@@ -161,9 +162,11 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
             # Shift so that tokens < n predict n
             shift_logits = lm_logits[..., :-1, :].contiguous()
             shift_labels = labels[..., 1:].contiguous()
-            # Flatten the tokens
-            loss_fct = nn.CrossEntropyLoss()
+            loss_fct = nn.CrossEntropyLoss(reduction='none')
+            batch_size, seqlen, _ = shift_logits.shape
             loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
+            loss = loss.view(batch_size, seqlen).sum(dim=-1)
+            loss = loss.mean()
 
         if not return_dict:
             output = (lm_logits,) + transformer_outputs[1:]
