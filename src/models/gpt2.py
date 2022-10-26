@@ -25,7 +25,7 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
 
         new_config = copy.deepcopy(config)
         new_config.prefix_len = 5
-        new_config.prefix_dropout_prob=0.1
+        new_config.prefix_dropout_prob=0.0
         new_config.prefix_hidden_size=512
         new_config.is_flat = False
 

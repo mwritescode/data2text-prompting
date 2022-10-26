@@ -13,10 +13,13 @@ TESTSET_CATEGORY_MAP = {
 class webNLG(Dataset):
     def __init__(self, split, test_mode='a'):
         self.data = load_dataset("web_nlg", 'webnlg_challenge_2017', split=split)
+        self.split = split
         if split == 'test':
             self.data = self.data.filter(lambda x: x['test_category'] in TESTSET_CATEGORY_MAP[test_mode])
         self.data = self.data.remove_columns([col for col in self.data.column_names if col not in COLS_TO_KEEP])
         self.data = self.data.map(self.__preprocess_row, remove_columns=['modified_triple_sets', 'lex'])
+        if split == 'train':
+            self.data = self.data.filter(lambda x: len(x['label']) > 0)
         self.data = self.data.to_pandas()
         if split == 'train':
             self.data = self.data.explode(column='label', ignore_index=True)
@@ -32,5 +35,8 @@ class webNLG(Dataset):
     def __preprocess_row(self, row):
         row['text'] = ' | '.join([triplet.replace(" | ", " : ") for triplet in row['modified_triple_sets']['mtriple_set'][0]])
         row['text'] = '| ' + row['text']
-        row['label'] = row['lex']['text']
+        if self.split == 'train':
+            row['label'] = [text for i, text in enumerate(row['lex']['text']) if row['lex']['comment'][i] == 'good']
+        else:
+            row['label'] = row['lex']['text']
         return row
