@@ -127,11 +127,12 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
         if past_key_values is None:
             batch_size = input_ids.shape[0]
             past_key_values = self.prefix_encoder(batch_size=batch_size)
-            prefix_attention_mask = torch.ones(batch_size, self.prefix_len).to(self.transformer.device)
-            attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
-            position_ids = attention_mask.long().cumsum(-1) - 1
-            position_ids.masked_fill_(attention_mask == 0, 1)
-            position_ids = position_ids[:, self.prefix_len:]
+            if attention_mask is not None:
+                prefix_attention_mask = torch.ones(batch_size, self.prefix_len).to(self.transformer.device)
+                attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
+                position_ids = attention_mask.long().cumsum(-1) - 1
+                position_ids.masked_fill_(attention_mask == 0, 1)
+                position_ids = position_ids[:, self.prefix_len:]
 
         transformer_outputs = self.transformer(
             input_ids,
