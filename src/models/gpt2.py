@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+from transformers.pytorch_utils import Conv1D
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 from transformers.models.gpt2.modeling_gpt2 import GPT2PreTrainedModel, GPT2Model
 from transformers.utils.model_parallel_utils import get_device_map, assert_device_map
@@ -38,6 +39,11 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
 
         # Initialize weights and apply final processing
         self.post_init()
+    
+    def train(self, mode=True):
+       super().train(mode)
+       self.transformer.eval()
+       self.lm_head.eval()
 
     def parallelize(self, device_map=None):
         self.device_map = (
@@ -92,7 +98,7 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
             past = self.prefix_encoder(batch_size=batch_size)
             if position_ids is not None:
                 position_ids = position_ids[:, self.prefix_len:]
-                
+   
         return {
             "input_ids": input_ids,
             "past_key_values": past,
@@ -130,9 +136,6 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
             if attention_mask is not None:
                 prefix_attention_mask = torch.ones(batch_size, self.prefix_len).to(self.transformer.device)
                 attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
-                position_ids = attention_mask.long().cumsum(-1) - 1
-                position_ids.masked_fill_(attention_mask == 0, 1)
-                position_ids = position_ids[:, self.prefix_len:]
 
         transformer_outputs = self.transformer(
             input_ids,
