@@ -40,6 +40,9 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
         # Initialize weights and apply final processing
         self.post_init()
     
+    def _init_weights(self, module):
+        pass
+    
     def train(self, mode=True):
        super().train(mode)
        self.transformer.eval()
