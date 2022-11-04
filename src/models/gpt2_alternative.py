@@ -23,6 +23,7 @@ class GPT2PrefixTuningConfig(PretrainedConfig):
         prefix_hidden_size=512,
         is_flat=False,
         pad_token_id=50257,
+        objective_type='sentence',
         **kwargs):
         super().__init__(**kwargs)
         self.plm_name_or_path = plm_name_or_path
@@ -35,7 +36,7 @@ class GPT2PrefixTuningConfig(PretrainedConfig):
         self.update(plm_config)
         self.pad_token_id = pad_token_id
         self.vocab_size = self.pad_token_id + 1 
-        self.objective_type = 'sentence-level' # or 'token-level' which is the classical objective
+        self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
 
 class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
     def __init__(self, config, pretrained_model=None):
@@ -134,7 +135,7 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
                 prefix_attention_mask = torch.ones(batch_size, self.prefix_len).to(input_ids.device)
                 attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
 
-        labels_for_plm = None if self.config.objective_type == 'sentence-level' else labels
+        labels_for_plm = None if self.config.objective_type == 'sentence' else labels
 
         transformer_outputs = self.pretrained_model(
             input_ids,
