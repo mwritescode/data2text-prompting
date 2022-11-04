@@ -35,6 +35,7 @@ class GPT2PrefixTuningConfig(PretrainedConfig):
         self.update(plm_config)
         self.pad_token_id = pad_token_id
         self.vocab_size = self.pad_token_id + 1 
+        self.objective_type = 'sentence-level' # or 'token-level' which is the classical objective
 
 class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
     def __init__(self, config, pretrained_model=None):
@@ -51,7 +52,6 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
 
         self.prefix_len = config.prefix_len
         self.prefix_encoder = PrefixEncoder(config)
-
 
     def train(self, mode=True):
         super().train(mode)
@@ -134,6 +134,8 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
                 prefix_attention_mask = torch.ones(batch_size, self.prefix_len).to(input_ids.device)
                 attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
 
+        labels_for_plm = None if self.config.objective_type == 'sentence-level' else labels
+
         transformer_outputs = self.pretrained_model(
             input_ids,
             past_key_values=past_key_values,
@@ -144,38 +146,41 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
             inputs_embeds=inputs_embeds,
             encoder_hidden_states=encoder_hidden_states,
             encoder_attention_mask=encoder_attention_mask,
-            labels=None,
+            labels=labels_for_plm,
             use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
         )
         
-        lm_logits = transformer_outputs.logits if return_dict else transformer_outputs[0]
+        if labels_for_plm is None:
+            lm_logits = transformer_outputs.logits if return_dict else transformer_outputs[0]
 
-        loss = None
-        if labels is not None:
-            # Shift so that tokens < n predict n
-            shift_logits = lm_logits[..., :-1, :].contiguous()
-            shift_labels = labels[..., 1:].contiguous()
-            loss_fct = nn.CrossEntropyLoss(reduction='none')
-            batch_size, seqlen, _ = shift_logits.shape
-            loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
-            loss = loss.view(batch_size, seqlen).sum(dim=-1)
-            loss = loss.mean()
+            loss = None
+            if labels is not None:
+                # Shift so that tokens < n predict n
+                shift_logits = lm_logits[..., :-1, :].contiguous()
+                shift_labels = labels[..., 1:].contiguous()
+                loss_fct = nn.CrossEntropyLoss(reduction='none')
+                batch_size, seqlen, _ = shift_logits.shape
+                loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
+                loss = loss.view(batch_size, seqlen).sum(dim=-1)
+                loss = loss.mean()
 
-        if not return_dict:
-            output = (lm_logits,) + transformer_outputs[1:]
-            return ((loss,) + output) if loss is not None else output
+            if not return_dict:
+                output = (lm_logits,) + transformer_outputs[1:]
+                return ((loss,) + output) if loss is not None else output
 
-        return CausalLMOutputWithCrossAttentions(
-            loss=loss,
-            logits=lm_logits,
-            past_key_values=transformer_outputs.past_key_values,
-            hidden_states=transformer_outputs.hidden_states,
-            attentions=transformer_outputs.attentions,
-            cross_attentions=transformer_outputs.cross_attentions,
-        )
+            return CausalLMOutputWithCrossAttentions(
+                loss=loss,
+                logits=lm_logits,
+                past_key_values=transformer_outputs.past_key_values,
+                hidden_states=transformer_outputs.hidden_states,
+                attentions=transformer_outputs.attentions,
+                cross_attentions=transformer_outputs.cross_attentions,
+            )
+        else:
+            return transformer_outputs
 
     @staticmethod
     def _reorder_cache(past, beam_idx):
