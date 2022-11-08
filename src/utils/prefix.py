@@ -44,3 +44,60 @@ class PrefixEncoder(nn.Module):
         past_key_values = past_key_values.permute([2, 0, 3, 1, 4]).split(2)
 
         return past_key_values
+
+class PrefixEncoderForSeq2SeqModels(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.prefix_dec = PrefixEncoder(config=config)
+        if config.use_encoder_prefix:
+            self.prefix_enc = PrefixEncoder(config=config)
+        if config.use_cross_prefix:
+            self.prefix_cross = PrefixEncoder(config=config)
+
+        self.use_encoder_prefix = config.use_encoder_prefix
+        self.use_cross_prefix = config.use_cross_prefix
+        self.prefix_len = config.prefix_len
+    
+    def forward(self, batch_size):
+        decoder_past_key_values = self.prefix_dec(batch_size)
+        if self.use_encoder_prefix:
+            encoder_past_key_values = self.prefix_enc(batch_size)
+        if self.use_cross_prefix:
+            cross_past_key_values = self.prefix_cross(batch_size)
+
+        """results = []
+        for i, key_value in enumerate(decoder_past_key_values):
+            past_dict = {
+                'self': {
+                    'prev_key': key_value[0].contiguous(),
+                    'prev_value': key_value[1].contiguous(),
+                    'padding_mask': torch.zeros(batch_size, self.prefix_len).to(key_value.device).bool()
+                }}
+            if self.use_encoder_prefix:
+                encoder_key_value = encoder_past_key_values[i]
+                past_dict['encoder'] = {
+                    'prev_key': encoder_key_value[0].contiguous(),
+                    'prev_value': encoder_key_value[1].contiguous(),
+                    'padding_mask': torch.zeros(batch_size, self.prefix_len).to(encoder_key_value.device).bool()
+                }
+            if self.use_cross_prefix:
+                cross_key_value = cross_past_key_values[i]
+                past_dict['encoder_decoder'] = {
+                    'prev_key': cross_key_value[0].contiguous(),
+                    'prev_value': cross_key_value[1].contiguous(),
+                    'padding_mask': torch.zeros(batch_size, self.prefix_len).to(cross_key_value.device).bool()
+                }
+            results.append(past_dict)"""
+        
+        results = []
+        for i, key_value in enumerate(decoder_past_key_values):
+            past_dict = {'self': key_value}
+            if self.use_encoder_prefix:
+                encoder_key_value = encoder_past_key_values[i]
+                past_dict['encoder'] = encoder_key_value
+            if self.use_cross_prefix:
+                cross_key_value = cross_past_key_values[i]
+                past_dict['encoder_decoder'] = cross_key_value
+            results.append(past_dict)
+        
+        return tuple(results)
