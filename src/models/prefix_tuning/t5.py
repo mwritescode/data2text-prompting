@@ -2,19 +2,19 @@ import torch
 from torch import nn
 from typing import List, Optional, Tuple, Dict, Union
 from transformers.modeling_outputs import Seq2SeqLMOutput
-from transformers import PretrainedConfig, AutoConfig, BartPretrainedModel
+from transformers import PretrainedConfig, AutoConfig, T5PreTrainedModel
 from transformers.generation_utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
 
-from ..utils.prefix import PrefixEncoderForSeq2SeqModels
-from ..utils.modeling_bart import BartForConditionalGeneration
+from src.utils.prefix import PrefixEncoderForSeq2SeqModels
+from src.utils.modeling_t5 import T5ForConditionalGeneration
 
-class BartForConditionalGenerationWithPrefix(BartPretrainedModel):
+class T5ForConditionalGenerationWithPrefix(T5PreTrainedModel):
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         print(config)
         if pretrained_model is None:
             print('instantiating model')
-            self.pretrained_model = BartForConditionalGeneration.from_pretrained(config.plm_name_or_path)
+            self.pretrained_model = T5ForConditionalGeneration.from_pretrained(config.plm_name_or_path)
         else:
             self.pretrained_model = pretrained_model
 
@@ -103,13 +103,13 @@ class BartForConditionalGenerationWithPrefix(BartPretrainedModel):
             **generation_kwargs)
 
 
-class BartPrefixTuningConfig(PretrainedConfig):
-    model_type = "bart"
+class T5PrefixTuningConfig(PretrainedConfig):
+    model_type = "t5"
     keys_to_ignore_at_inference = ["past_key_values"]
-    attribute_map = {"num_attention_heads": "encoder_attention_heads", "hidden_size": "d_model"}
+    attribute_map = {"hidden_size": "d_model", "num_attention_heads": "num_heads", "num_hidden_layers": "num_layers"}
 
     def __init__(self, 
-        plm_name_or_path='facebook/bart-base',
+        plm_name_or_path='t5-small',
         prefix_len=5,
         prefix_dropout_prob=0.0,
         prefix_hidden_size=512,
