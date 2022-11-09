@@ -1,18 +1,23 @@
 import torch
 from torch import nn
-from typing import List, Optional, Tuple, Dict, Union
 from transformers.modeling_outputs import Seq2SeqLMOutput
+from transformers.generation_beam_constraints import Constraint
+from transformers.generation_logits_process import LogitsProcessorList
+from transformers.generation_stopping_criteria import StoppingCriteriaList
+from typing import List, Optional, Tuple, Dict, Union, Iterable, Callable
 from transformers import PretrainedConfig, AutoConfig, BartPretrainedModel
+from transformers.generation_utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
 
 from ..utils.prefix import PrefixEncoderForSeq2SeqModels
-from ..utils.modeling_bart import BartForConditionalGenerationWithCacheKey
-    
+from ..utils.modeling_bart import BartForConditionalGeneration
+
 class BartForConditionalGenerationWithPrefix(BartPretrainedModel):
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         print(config)
         if pretrained_model is None:
-            self.pretrained_model = BartForConditionalGenerationWithCacheKey.from_pretrained(config.plm_name_or_path)
+            print('instantiating model')
+            self.pretrained_model = BartForConditionalGeneration.from_pretrained(config.plm_name_or_path)
         else:
             self.pretrained_model = pretrained_model
 
@@ -56,16 +61,9 @@ class BartForConditionalGenerationWithPrefix(BartPretrainedModel):
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
     ) -> Union[Tuple, Seq2SeqLMOutput]:
-        
-        if past_key_values is not None and self.training:
-            raise ValueError("past_key_value is dedicated to prefix tokens in this implementation. Please don't use it for anything else.")
-        
-        if past_key_values is None:
-            batch_size = input_ids.shape[0]
-            past_key_values = self.prefix_encoder(batch_size=batch_size)
-            if attention_mask is not None:
-                prefix_attention_mask = torch.ones(batch_size, self.prefix_len).to(input_ids.device)
-                attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
+
+        batch_size = input_ids.shape[0]
+        prefix_key_values = self.prefix_encoder(batch_size=batch_size)
         
         return self.pretrained_model(
             input_ids=input_ids,
@@ -83,8 +81,25 @@ class BartForConditionalGenerationWithPrefix(BartPretrainedModel):
             use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
-            return_dict=return_dict
+            return_dict=return_dict,
+            prefix_key_values=prefix_key_values
         )
+    
+    def generate(
+        self, 
+        input_ids,
+        attention_mask=None,
+        **generation_kwargs
+        ) -> Union[GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput, torch.LongTensor]:
+        
+        batch_size = input_ids.shape[0]
+        prefix_key_values = self.prefix_encoder(batch_size, sample_size=generation_kwargs['num_beams'])
+
+        return self.pretrained_model.generate(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            prefix_key_values=prefix_key_values,
+            **generation_kwargs)
 
 
 class BartPrefixTuningConfig(PretrainedConfig):
