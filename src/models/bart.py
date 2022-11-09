@@ -1,10 +1,7 @@
 import torch
 from torch import nn
+from typing import List, Optional, Tuple, Dict, Union
 from transformers.modeling_outputs import Seq2SeqLMOutput
-from transformers.generation_beam_constraints import Constraint
-from transformers.generation_logits_process import LogitsProcessorList
-from transformers.generation_stopping_criteria import StoppingCriteriaList
-from typing import List, Optional, Tuple, Dict, Union, Iterable, Callable
 from transformers import PretrainedConfig, AutoConfig, BartPretrainedModel
 from transformers.generation_utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
 
