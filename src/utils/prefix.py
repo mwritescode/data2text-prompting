@@ -58,46 +58,25 @@ class PrefixEncoderForSeq2SeqModels(nn.Module):
         self.use_cross_prefix = config.use_cross_prefix
         self.prefix_len = config.prefix_len
     
-    def forward(self, batch_size):
-        decoder_past_key_values = self.prefix_dec(batch_size)
-        if self.use_encoder_prefix:
-            encoder_past_key_values = self.prefix_enc(batch_size)
-        if self.use_cross_prefix:
-            cross_past_key_values = self.prefix_cross(batch_size)
+    def forward(self, batch_size, sample_size=1):
+        batch_size_dec = batch_size * sample_size
+        batch_size_enc = batch_size
+        decoder_past_key_values = self.prefix_dec(batch_size_dec)
 
-        """results = []
-        for i, key_value in enumerate(decoder_past_key_values):
-            past_dict = {
-                'self': {
-                    'prev_key': key_value[0].contiguous(),
-                    'prev_value': key_value[1].contiguous(),
-                    'padding_mask': torch.zeros(batch_size, self.prefix_len).to(key_value.device).bool()
-                }}
-            if self.use_encoder_prefix:
-                encoder_key_value = encoder_past_key_values[i]
-                past_dict['encoder'] = {
-                    'prev_key': encoder_key_value[0].contiguous(),
-                    'prev_value': encoder_key_value[1].contiguous(),
-                    'padding_mask': torch.zeros(batch_size, self.prefix_len).to(encoder_key_value.device).bool()
-                }
-            if self.use_cross_prefix:
-                cross_key_value = cross_past_key_values[i]
-                past_dict['encoder_decoder'] = {
-                    'prev_key': cross_key_value[0].contiguous(),
-                    'prev_value': cross_key_value[1].contiguous(),
-                    'padding_mask': torch.zeros(batch_size, self.prefix_len).to(cross_key_value.device).bool()
-                }
-            results.append(past_dict)"""
-        
+        if self.use_encoder_prefix:
+            encoder_past_key_values = self.prefix_enc(batch_size_enc)
+        if self.use_cross_prefix:
+            cross_past_key_values = self.prefix_cross(batch_size_dec)
+
         results = []
         for i, key_value in enumerate(decoder_past_key_values):
-            past_dict = {'self': key_value}
+            past_dict = {'decoder': key_value}
             if self.use_encoder_prefix:
                 encoder_key_value = encoder_past_key_values[i]
                 past_dict['encoder'] = encoder_key_value
             if self.use_cross_prefix:
                 cross_key_value = cross_past_key_values[i]
-                past_dict['encoder_decoder'] = cross_key_value
+                past_dict['cross'] = cross_key_value
             results.append(past_dict)
         
         return tuple(results)
