@@ -27,6 +27,10 @@ class BartForConditionalGenerationWithPrefix(BartPretrainedModel):
         self.prefix_len = config.prefix_len
         self.prefix_encoder = PrefixEncoderForSeq2SeqModels(config)
     
+    def train(self, mode=True):
+        super().train(mode)
+        self.pretrained_model.eval()
+    
     def get_encoder(self):
         return self.pretrained_model.get_encoder()
 
