@@ -43,6 +43,12 @@ class T5ForConditionalGenerationWithPrefix(T5PreTrainedModel):
     def set_output_embeddings(self, new_embeddings):
         self.pretrained_model.set_output_embeddings(new_embeddings=new_embeddings)
     
+    def get_input_embeddings(self):
+        return self.pretrained_model.get_input_embeddings()
+
+    def set_input_embeddings(self, new_embeddings):
+        self.pretrained_model.set_input_embeddings(new_embeddings=new_embeddings)
+    
     def forward(
         self,
         input_ids: torch.LongTensor = None,
