@@ -244,7 +244,7 @@ class T5Attention(nn.Module):
             if mask is not None:
                 if prefix_key_value is not None:
                     mask = torch.cat([
-                        torch.zeros((batch_size, 1, mask.shape[2], key_states.shape[2] - key_length)).to(mask.device),
+                        torch.zeros((batch_size, 1, mask.shape[2], key_states.shape[2] - key_length)).to(mask.device) * -10000.0,
                         mask
                     ], dim=3) 
                 position_bias = position_bias + mask  # (batch_size, n_heads, seq_length, key_length + prefix_length)
