@@ -28,13 +28,14 @@ from transformers.utils import logging
 from transformers.modeling_outputs import (
     BaseModelOutput,
     BaseModelOutputWithPastAndCrossAttentions,
-    Seq2SeqLMOutput,
-    Seq2SeqModelOutput,
+    Seq2SeqLMOutput
 )
 from transformers.models.t5.configuration_t5 import T5Config
 from transformers.utils.model_parallel_utils import assert_device_map, get_device_map
 from transformers.models.t5.modeling_t5 import T5PreTrainedModel, T5LayerNorm, T5LayerFF
 from transformers.pytorch_utils import find_pruneable_heads_and_indices, prune_linear_layer
+
+from src.utils.generation_utils import CustomGenerationMixin
 
 logger = logging.get_logger(__name__)
 
@@ -211,8 +212,19 @@ class T5Attention(nn.Module):
 
         # Concatenate prefix to key-value states.
         if prefix_key_value is not None:
-            key_states = torch.cat([prefix_key_value[0], key_states], dim=2)
-            value_states = torch.cat([prefix_key_value[1], value_states], dim=2)
+            prefix_key = prefix_key_value[0]
+            prefix_value = prefix_key_value[1]
+            # Repeat prefix n times if we are in contrastive search decoding
+            if prefix_key.shape[0] < key_states.shape[0]:
+                num_dims = len(prefix_key.shape) - 1
+                prefix_key = prefix_key.repeat(
+                    key_states.shape[0] // prefix_key.shape[0], 
+                    *[1 for _ in range(num_dims)])
+                prefix_value = prefix_value.repeat(
+                    value_states.shape[0] // prefix_value.shape[0], 
+                    *[1 for _ in range(num_dims)])
+            key_states = torch.cat([prefix_key, key_states], dim=2)
+            value_states = torch.cat([prefix_value, value_states], dim=2)
 
         # compute scores
         scores = torch.matmul(
@@ -742,7 +754,7 @@ class T5Stack(T5PreTrainedModel):
             cross_attentions=all_cross_attentions,
         )
 
-class T5ForConditionalGeneration(T5PreTrainedModel):
+class T5ForConditionalGeneration(T5PreTrainedModel, CustomGenerationMixin):
     _keys_to_ignore_on_load_missing = [
         r"encoder.embed_tokens.weight",
         r"decoder.embed_tokens.weight",

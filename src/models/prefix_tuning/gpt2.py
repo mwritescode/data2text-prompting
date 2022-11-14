@@ -5,8 +5,9 @@ from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 from transformers.models.gpt2.modeling_gpt2 import GPT2PreTrainedModel, GPT2LMHeadModel
 
 from src.utils.prefix import PrefixEncoder
+from src.utils.generation_utils import CustomGenerationMixin
 
-class GPT2PrefixTuningConfig(PretrainedConfig):
+class GPT2PrefixTuningConfig(PretrainedConfig, CustomGenerationMixin):
     attribute_map = {
         "hidden_size": "n_embd",
         "max_position_embeddings": "n_positions",

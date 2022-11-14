@@ -29,6 +29,7 @@ from transformers.models.bart.modeling_bart import BartPretrainedModel, BartLear
 from transformers.models.bart.modeling_bart import shift_tokens_right, _expand_mask, _make_causal_mask
 from transformers.modeling_outputs import BaseModelOutput, BaseModelOutputWithPastAndCrossAttentions, Seq2SeqLMOutput, Seq2SeqModelOutput
 
+from src.utils.generation_utils import CustomGenerationMixin
 
 logger = logging.get_logger(__name__)
 
@@ -594,7 +595,7 @@ class BartDecoder(BartPretrainedModel):
         if encoder_hidden_states is not None and encoder_attention_mask is not None:
             # [bsz, seq_len] -> [bsz, 1, tgt_seq_len, src_seq_len]
             encoder_attention_mask = _expand_mask(encoder_attention_mask, inputs_embeds.dtype, tgt_len=input_shape[-1])
-
+        
         if prefix_key_values is not None and attention_mask is not None:
             # Add prefix attention to the attention mask
             bsz_input, _, tgt_seq_len, _ = attention_mask.size()
@@ -608,7 +609,7 @@ class BartDecoder(BartPretrainedModel):
             # Add prefix attention to the cross attention mask
             bsz_input, _, tgt_seq_len, _ = encoder_attention_mask.size()
             bsz_prefix, _, prefix_seq_length, _ = prefix_key_values[0]['cross'][0].size()
-            bsz = bsz_input if bsz_input == bsz_prefix else None
+            bsz = bsz_input
             encoder_attention_mask = torch.cat([
                 torch.zeros(bsz, 1, tgt_seq_len, prefix_seq_length).to(encoder_attention_mask.device), 
                 encoder_attention_mask], dim=3)
@@ -837,7 +838,7 @@ class BartModel(BartPretrainedModel):
         )
 
 
-class BartForConditionalGeneration(BartPretrainedModel):
+class BartForConditionalGeneration(BartPretrainedModel, CustomGenerationMixin):
     base_model_prefix = "model"
     _keys_to_ignore_on_load_missing = [r"final_logits_bias", r"lm_head.weight"]
 
@@ -966,7 +967,7 @@ class BartForConditionalGeneration(BartPretrainedModel):
         # cut decoder_input_ids if past is used
         if past is not None:
             decoder_input_ids = decoder_input_ids[:, -1:]
-
+        
         return {
             "input_ids": None,  # encoder_outputs is defined. input_ids not needed
             "encoder_outputs": encoder_outputs,
@@ -977,7 +978,7 @@ class BartForConditionalGeneration(BartPretrainedModel):
             "decoder_head_mask": decoder_head_mask,
             "cross_attn_head_mask": cross_attn_head_mask,
             "use_cache": use_cache,  # change this to avoid caching (presumably for debugging)
-            "prefix_key_values": kwargs["prefix_key_values"]
+            "prefix_key_values": kwargs['prefix_key_values']
         }
 
     def prepare_decoder_input_ids_from_labels(self, labels: torch.Tensor):

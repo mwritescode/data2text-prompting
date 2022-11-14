@@ -7,8 +7,9 @@ from transformers.generation_utils import GreedySearchOutput, SampleOutput, Beam
 
 from src.utils.prefix import PrefixEncoderForSeq2SeqModels
 from src.utils.modeling_bart import BartForConditionalGeneration
+from src.utils.generation_utils import CustomGenerationMixin
 
-class BartForConditionalGenerationWithPrefix(BartPretrainedModel):
+class BartForConditionalGenerationWithPrefix(BartPretrainedModel, CustomGenerationMixin):
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         print(config)
@@ -100,7 +101,9 @@ class BartForConditionalGenerationWithPrefix(BartPretrainedModel):
         ) -> Union[GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput, torch.LongTensor]:
         
         batch_size = input_ids.shape[0]
-        prefix_key_values = self.prefix_encoder(batch_size, sample_size=generation_kwargs['num_beams'])
+        sample_size = generation_kwargs.get('num_beams', 1)
+  
+        prefix_key_values = self.prefix_encoder(batch_size, sample_size=sample_size)
 
         return self.pretrained_model.generate(
             input_ids=input_ids,
