@@ -10,7 +10,7 @@ class CustomGenerationMixin(GenerationMixin):
         super().__init__()
     
     @staticmethod
-    def _expand_inputs_for_generation(
+    def _expand_inputs_for_contrastive_search(
         expand_size: int = 1,
         is_encoder_decoder: bool = False,
         input_ids: Optional[torch.LongTensor] = None,
@@ -139,7 +139,7 @@ class CustomGenerationMixin(GenerationMixin):
                 )
 
                 # Expands model inputs top_k times, for batched forward passes (akin to beam search).
-                _, model_kwargs = self._expand_inputs_for_generation(
+                _, model_kwargs = self._expand_inputs_for_contrastive_search(
                     expand_size=top_k, is_encoder_decoder=self.config.is_encoder_decoder, **model_kwargs
                 )
 
