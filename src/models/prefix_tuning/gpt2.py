@@ -7,7 +7,7 @@ from transformers.models.gpt2.modeling_gpt2 import GPT2PreTrainedModel, GPT2LMHe
 from src.utils.prefix import PrefixEncoder
 from src.utils.generation_utils import CustomGenerationMixin
 
-class GPT2PrefixTuningConfig(PretrainedConfig, CustomGenerationMixin):
+class GPT2PrefixTuningConfig(PretrainedConfig):
     attribute_map = {
         "hidden_size": "n_embd",
         "max_position_embeddings": "n_positions",
@@ -39,7 +39,7 @@ class GPT2PrefixTuningConfig(PretrainedConfig, CustomGenerationMixin):
         self.vocab_size = self.pad_token_id + 1 
         self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
 
-class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
+class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel, CustomGenerationMixin):
     def __init__(self, config, pretrained_model=None):
         super().__init__(config)
         print(config)

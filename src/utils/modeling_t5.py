@@ -216,13 +216,9 @@ class T5Attention(nn.Module):
             prefix_value = prefix_key_value[1]
             # Repeat prefix n times if we are in contrastive search decoding
             if prefix_key.shape[0] < key_states.shape[0]:
-                num_dims = len(prefix_key.shape) - 1
-                prefix_key = prefix_key.repeat(
-                    key_states.shape[0] // prefix_key.shape[0], 
-                    *[1 for _ in range(num_dims)])
-                prefix_value = prefix_value.repeat(
-                    value_states.shape[0] // prefix_value.shape[0], 
-                    *[1 for _ in range(num_dims)])
+                prefix_key = prefix_key.repeat_interleave(key_states.shape[0] // prefix_key.shape[0], dim=0)
+                prefix_value = prefix_value.repeat_interleave(value_states.shape[0] // prefix_value.shape[0], dim=0)
+
             key_states = torch.cat([prefix_key, key_states], dim=2)
             value_states = torch.cat([prefix_value, value_states], dim=2)
 
