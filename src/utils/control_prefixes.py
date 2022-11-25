@@ -11,7 +11,7 @@ class ControlPrefixEncoder(nn.Module):
         self.n_layer = config.num_hidden_layers
         self.n_head = config.num_attention_heads
         self.n_embd = config.hidden_size // config.num_attention_heads
-        self.input_dep_prefixes = config.input_dep_prefixes # Should be a dict {'category_name': {'seen': num_seen_classes_in_category, 'unseen': num_unseen_classes_in_category}}
+        self.input_dep_prefixes = config.input_dep_prefixes # Should be a dict {'category_name': num_seen_classes_in_category}
         self.control_prefix_len = config.control_prefix_len
 
         self.prefix_tokens = torch.arange(self.prefix_len).long()
@@ -26,18 +26,10 @@ class ControlPrefixEncoder(nn.Module):
             )
             # Encode the control prefixes
             self.control_prefixes = nn.ModuleDict()
-            for name, num_classes_dict in self.input_dep_prefixes.items():
-                num_unseen_classes = num_classes_dict.get('unseen', 0)
-                num_classes = num_classes_dict.get('seen', 1) + num_unseen_classes
+            for name, num_classes in self.input_dep_prefixes.items():
                 self.control_prefixes[f'embed_{name}'] = nn.Embedding(
                     self.control_prefix_len * num_classes, config.hidden_size
                 )
-                if num_unseen_classes > 0:
-                    print('Maxing prefixes for unseen classes zero')
-                    with torch.no_grad():
-                        self.control_prefixes[f'embed_{name}'].weight[-num_unseen_classes:] = torch.zeros(
-                            self.control_prefixes[f'embed_{name}'].weight[-num_unseen_classes:].shape
-                        ).to(self.embedding.weight.device)
 
         else:
             self.embedding = nn.Embedding(config.prefix_len, config.num_hidden_layers * 2 * config.hidden_size)
@@ -52,8 +44,7 @@ class ControlPrefixEncoder(nn.Module):
             past_key_values = self.trans(prefix_tokens)
             print(past_key_values.shape)
 
-            for name, num_classes_dict in self.input_dep_prefixes.items():
-                num_classes = num_classes_dict.get('seen', 1) + num_classes_dict.get('unseen', 0)
+            for name, num_classes in self.input_dep_prefixes.items():
                 input_dep_tokens = torch.arange(
                     self.control_prefix_len * num_classes
                     ).long().unsqueeze(0).expand(batch_size, -1).to(self.embedding.weight.device)

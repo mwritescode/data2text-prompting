@@ -26,7 +26,7 @@ class GPT2ControlPrefixesConfig(PretrainedConfig):
         pad_token_id=50257,
         objective_type='sentence',
         control_prefix_len=3,
-        input_dep_prefixes={'cats': {'seen': 10, 'unseen': 2}},
+        input_dep_prefixes={'cats': 10},
         **kwargs):
         super().__init__(**kwargs)
         self.plm_name_or_path = plm_name_or_path
