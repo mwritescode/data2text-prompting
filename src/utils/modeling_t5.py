@@ -252,9 +252,9 @@ class T5Attention(nn.Module):
             if mask is not None:
                 if prefix_key_value is not None:
                     mask = torch.cat([
-                        torch.zeros((batch_size, 1, mask.shape[2], key_states.shape[2] - key_length)).to(mask.device) * -10000.0,
+                        torch.zeros((batch_size, 1, mask.shape[2], key_states.shape[2] - key_length)).to(mask.device) *  torch.finfo(mask.dtype).min,
                         mask
-                    ], dim=3) 
+                    ], dim=3)
                 position_bias = position_bias + mask  # (batch_size, n_heads, seq_length, key_length + prefix_length)
 
         if self.pruned_heads:
@@ -279,7 +279,6 @@ class T5Attention(nn.Module):
         attn_output = unshape(torch.matmul(attn_weights, value_states))  # (batch_size, seq_length, dim)
         attn_output = self.o(attn_output)
 
-        present_key_value_state = (key_states, value_states) if (self.is_decoder and use_cache) else None
         outputs = (attn_output,) + (present_key_value_state,) + (position_bias,)
 
         if output_attentions:
@@ -968,7 +967,7 @@ class T5ForConditionalGeneration(T5PreTrainedModel, CustomGenerationMixin):
         # cut decoder_input_ids if past is used
         if past is not None:
             input_ids = input_ids[:, -1:]
-
+        
         return {
             "decoder_input_ids": input_ids,
             "past_key_values": past,
