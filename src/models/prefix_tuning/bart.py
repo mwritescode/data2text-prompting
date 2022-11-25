@@ -9,6 +9,36 @@ from src.utils.prefix import PrefixEncoderForSeq2SeqModels
 from src.utils.modeling_bart import BartForConditionalGeneration
 from src.utils.generation_utils import CustomGenerationMixin
 
+class BartPrefixTuningConfig(PretrainedConfig):
+    model_type = "bart"
+    keys_to_ignore_at_inference = ["past_key_values"]
+    attribute_map = {"num_attention_heads": "encoder_attention_heads", "hidden_size": "d_model"}
+
+    def __init__(self, 
+        plm_name_or_path='facebook/bart-base',
+        prefix_len=5,
+        prefix_dropout_prob=0.0,
+        prefix_hidden_size=512,
+        is_flat=False,
+        objective_type='sentence',
+        use_encoder_prefix=True,
+        use_cross_prefix=True,
+        use_layer_dep=False,
+        **kwargs):
+        super().__init__(**kwargs)
+        self.plm_name_or_path = plm_name_or_path
+        self.prefix_len = prefix_len
+        self.prefix_dropout_prob = prefix_dropout_prob
+        self.prefix_hidden_size = prefix_hidden_size
+        self.is_flat = is_flat
+        self.use_encoder_prefix = use_encoder_prefix
+        self.use_cross_prefix = use_cross_prefix
+        plm_config = AutoConfig.from_pretrained(plm_name_or_path).to_dict()
+        del plm_config['_name_or_path']
+        self.update(plm_config)
+        self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
+        self.use_layer_dep = use_layer_dep
+
 class BartForConditionalGenerationWithPrefix(BartPretrainedModel, CustomGenerationMixin):
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
@@ -110,32 +140,3 @@ class BartForConditionalGenerationWithPrefix(BartPretrainedModel, CustomGenerati
             attention_mask=attention_mask,
             prefix_key_values=prefix_key_values,
             **generation_kwargs)
-
-
-class BartPrefixTuningConfig(PretrainedConfig):
-    model_type = "bart"
-    keys_to_ignore_at_inference = ["past_key_values"]
-    attribute_map = {"num_attention_heads": "encoder_attention_heads", "hidden_size": "d_model"}
-
-    def __init__(self, 
-        plm_name_or_path='facebook/bart-base',
-        prefix_len=5,
-        prefix_dropout_prob=0.0,
-        prefix_hidden_size=512,
-        is_flat=False,
-        objective_type='sentence',
-        use_encoder_prefix=True,
-        use_cross_prefix=True,
-        **kwargs):
-        super().__init__(**kwargs)
-        self.plm_name_or_path = plm_name_or_path
-        self.prefix_len = prefix_len
-        self.prefix_dropout_prob = prefix_dropout_prob
-        self.prefix_hidden_size = prefix_hidden_size
-        self.is_flat = is_flat
-        self.use_encoder_prefix = use_encoder_prefix
-        self.use_cross_prefix = use_cross_prefix
-        plm_config = AutoConfig.from_pretrained(plm_name_or_path).to_dict()
-        del plm_config['_name_or_path']
-        self.update(plm_config)
-        self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective

@@ -9,6 +9,37 @@ from src.utils.prefix import PrefixEncoderForSeq2SeqModels
 from src.utils.modeling_t5 import T5ForConditionalGeneration
 from src.utils.generation_utils import CustomGenerationMixin
 
+class T5PrefixTuningConfig(PretrainedConfig):
+    model_type = "t5"
+    keys_to_ignore_at_inference = ["past_key_values"]
+    attribute_map = {"hidden_size": "d_model", "num_attention_heads": "num_heads", "num_hidden_layers": "num_layers"}
+
+    def __init__(self, 
+        plm_name_or_path='t5-small',
+        prefix_len=5,
+        prefix_dropout_prob=0.0,
+        prefix_hidden_size=512,
+        is_flat=False,
+        objective_type='sentence',
+        use_encoder_prefix=True,
+        use_cross_prefix=True,
+        use_layer_dep=False,
+        **kwargs):
+        super().__init__(**kwargs)
+        self.plm_name_or_path = plm_name_or_path
+        self.prefix_len = prefix_len
+        self.prefix_dropout_prob = prefix_dropout_prob
+        self.prefix_hidden_size = prefix_hidden_size
+        self.is_flat = is_flat
+        self.use_encoder_prefix = use_encoder_prefix
+        self.use_cross_prefix = use_cross_prefix
+        plm_config = AutoConfig.from_pretrained(plm_name_or_path).to_dict()
+        plm_config['architectures'] = ["T5ForConditionalGeneration"]
+        del plm_config['_name_or_path']
+        self.update(plm_config)
+        self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
+        self.use_layer_dep = use_layer_dep
+
 class T5ForConditionalGenerationWithPrefix(T5PreTrainedModel, CustomGenerationMixin):
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
@@ -72,7 +103,7 @@ class T5ForConditionalGenerationWithPrefix(T5PreTrainedModel, CustomGenerationMi
 
         batch_size = input_ids.shape[0]
         prefix_key_values = self.prefix_encoder(batch_size=batch_size)
-        
+
         return self.pretrained_model(
             input_ids=input_ids,
             attention_mask=attention_mask,
@@ -92,7 +123,7 @@ class T5ForConditionalGenerationWithPrefix(T5PreTrainedModel, CustomGenerationMi
             return_dict=return_dict,
             prefix_key_values=prefix_key_values
         )
-    
+        
     def generate(
         self, 
         input_ids,
@@ -110,32 +141,3 @@ class T5ForConditionalGenerationWithPrefix(T5PreTrainedModel, CustomGenerationMi
             attention_mask=attention_mask,
             prefix_key_values=prefix_key_values,
             **generation_kwargs)
-
-
-class T5PrefixTuningConfig(PretrainedConfig):
-    model_type = "t5"
-    keys_to_ignore_at_inference = ["past_key_values"]
-    attribute_map = {"hidden_size": "d_model", "num_attention_heads": "num_heads", "num_hidden_layers": "num_layers"}
-
-    def __init__(self, 
-        plm_name_or_path='t5-small',
-        prefix_len=5,
-        prefix_dropout_prob=0.0,
-        prefix_hidden_size=512,
-        is_flat=False,
-        objective_type='sentence',
-        use_encoder_prefix=True,
-        use_cross_prefix=True,
-        **kwargs):
-        super().__init__(**kwargs)
-        self.plm_name_or_path = plm_name_or_path
-        self.prefix_len = prefix_len
-        self.prefix_dropout_prob = prefix_dropout_prob
-        self.prefix_hidden_size = prefix_hidden_size
-        self.is_flat = is_flat
-        self.use_encoder_prefix = use_encoder_prefix
-        self.use_cross_prefix = use_cross_prefix
-        plm_config = AutoConfig.from_pretrained(plm_name_or_path).to_dict()
-        del plm_config['_name_or_path']
-        self.update(plm_config)
-        self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective

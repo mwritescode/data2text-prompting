@@ -10,6 +10,8 @@ class PrefixEncoder(nn.Module):
         self.n_head = config.num_attention_heads
         self.n_embd = config.hidden_size // config.num_attention_heads
 
+        self.use_layer_dep =config.use_layer_dep
+
         self.prefix_tokens = torch.arange(self.prefix_len).long()
         if not self.is_flat:
             # Use a two-layer MLP to encode the prefix
@@ -19,6 +21,8 @@ class PrefixEncoder(nn.Module):
                 nn.Tanh(),
                 nn.Linear(config.prefix_hidden_size, config.num_hidden_layers * 2 * config.hidden_size)
             )
+            if self.use_layer_dep:
+                self.weights = nn.Parameter(torch.zeros(config.num_hidden_layers - 1))
         else:
             self.embedding = nn.Embedding(config.prefix_len, config.num_hidden_layers * 2 * config.hidden_size)
         
@@ -43,7 +47,16 @@ class PrefixEncoder(nn.Module):
         past_key_values = self.dropout(past_key_values)
         past_key_values = past_key_values.permute([2, 0, 3, 1, 4]).split(2)
 
-        return past_key_values
+        if self.use_layer_dep:
+            new_vals = ()
+            for i, past_key_value in enumerate(past_key_values):
+                if i > 0:
+                    past_key_value = past_key_value + self.weights[i-1] * past_key_values[i-1]                
+                new_vals += (past_key_value, )
+        else:
+            new_vals = past_key_values
+
+        return new_vals
 
 class PrefixEncoderForSeq2SeqModels(nn.Module):
     def __init__(self, config):

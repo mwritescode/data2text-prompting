@@ -25,6 +25,7 @@ class GPT2PrefixTuningConfig(PretrainedConfig):
         is_flat=False,
         pad_token_id=50257,
         objective_type='sentence',
+        use_layer_dep=False,
         **kwargs):
         super().__init__(**kwargs)
         self.plm_name_or_path = plm_name_or_path
@@ -38,6 +39,7 @@ class GPT2PrefixTuningConfig(PretrainedConfig):
         self.pad_token_id = pad_token_id
         self.vocab_size = self.pad_token_id + 1 
         self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
+        self.use_layer_dep = use_layer_dep
 
 class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel, CustomGenerationMixin):
     def __init__(self, config, pretrained_model=None):
