@@ -1,8 +1,6 @@
 import torch
 from torch import nn
 
-#TODO: I don't think we are training a way that deals with unseen categories, re-read the paper to see what they implement in that case
-
 class ControlPrefixEncoder(nn.Module):
     def __init__(self, config):
         super().__init__()
@@ -42,7 +40,6 @@ class ControlPrefixEncoder(nn.Module):
         if not self.is_flat:
             prefix_tokens = self.embedding(prefix)
             past_key_values = self.trans(prefix_tokens)
-            print(past_key_values.shape)
 
             for name, num_classes in self.input_dep_prefixes.items():
                 input_dep_tokens = torch.arange(
