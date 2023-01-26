@@ -35,8 +35,6 @@ from transformers.utils.model_parallel_utils import assert_device_map, get_devic
 from transformers.models.t5.modeling_t5 import T5PreTrainedModel, T5LayerNorm, T5LayerFF
 from transformers.pytorch_utils import find_pruneable_heads_and_indices, prune_linear_layer
 
-from src.utils.generation_utils import CustomGenerationMixin
-
 logger = logging.get_logger(__name__)
 
 # Warning message for FutureWarning: head_mask was separated into two input args - head_mask, decoder_head_mask
@@ -749,7 +747,7 @@ class T5Stack(T5PreTrainedModel):
             cross_attentions=all_cross_attentions,
         )
 
-class T5ForConditionalGeneration(T5PreTrainedModel, CustomGenerationMixin):
+class T5ForConditionalGeneration(T5PreTrainedModel):
     _keys_to_ignore_on_load_missing = [
         r"encoder.embed_tokens.weight",
         r"decoder.embed_tokens.weight",

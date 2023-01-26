@@ -29,8 +29,6 @@ from transformers.models.bart.modeling_bart import BartPretrainedModel, BartLear
 from transformers.models.bart.modeling_bart import shift_tokens_right, _expand_mask, _make_causal_mask
 from transformers.modeling_outputs import BaseModelOutput, BaseModelOutputWithPastAndCrossAttentions, Seq2SeqLMOutput, Seq2SeqModelOutput
 
-from src.utils.generation_utils import CustomGenerationMixin
-
 logger = logging.get_logger(__name__)
 
 
@@ -96,9 +94,14 @@ class BartAttention(nn.Module):
             # cross_attentions
             key_states = self._shape(self.k_proj(key_value_states), -1, bsz)
             value_states = self._shape(self.v_proj(key_value_states), -1, bsz)
+            prefix_key, prefix_value = prefix_key_value[0], prefix_key_value[1]
             if prefix_key_value is not None:
-                key_states = torch.cat([prefix_key_value[0], key_states], dim=2)
-                value_states = torch.cat([prefix_key_value[1], value_states], dim=2)
+                 # Repeat prefix n times if we are in contrastive search decoding
+                if prefix_key.shape[0] < key_states.shape[0]:
+                    prefix_key = prefix_key.repeat_interleave(key_states.shape[0] // prefix_key.shape[0], dim=0)
+                    prefix_value = prefix_value.repeat_interleave(value_states.shape[0] // prefix_value.shape[0], dim=0)
+                key_states = torch.cat([prefix_key, key_states], dim=2)
+                value_states = torch.cat([prefix_key, value_states], dim=2)
         elif past_key_value is not None:
             # reuse k, v, self_attention
             key_states = self._shape(self.k_proj(hidden_states), -1, bsz)
@@ -109,9 +112,14 @@ class BartAttention(nn.Module):
             # self_attention
             key_states = self._shape(self.k_proj(hidden_states), -1, bsz)
             value_states = self._shape(self.v_proj(hidden_states), -1, bsz)
+            prefix_key, prefix_value = prefix_key_value[0], prefix_key_value[1]
             if prefix_key_value is not None:
-                key_states = torch.cat([prefix_key_value[0], key_states], dim=2)
-                value_states = torch.cat([prefix_key_value[1], value_states], dim=2)
+                 # Repeat prefix n times if we are in contrastive search decoding
+                if prefix_key.shape[0] < key_states.shape[0]:
+                    prefix_key = prefix_key.repeat_interleave(key_states.shape[0] // prefix_key.shape[0], dim=0)
+                    prefix_value = prefix_value.repeat_interleave(value_states.shape[0] // prefix_value.shape[0], dim=0)
+                key_states = torch.cat([prefix_key, key_states], dim=2)
+                value_states = torch.cat([prefix_key, value_states], dim=2)
 
         if self.is_decoder:
             # if cross_attention save Tuple(torch.Tensor, torch.Tensor) of all cross attention key/value_states.
@@ -838,7 +846,7 @@ class BartModel(BartPretrainedModel):
         )
 
 
-class BartForConditionalGeneration(BartPretrainedModel, CustomGenerationMixin):
+class BartForConditionalGeneration(BartPretrainedModel):
     base_model_prefix = "model"
     _keys_to_ignore_on_load_missing = [r"final_logits_bias", r"lm_head.weight"]
 

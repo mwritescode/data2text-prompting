@@ -3,11 +3,10 @@ from torch import nn
 from typing import List, Optional, Tuple, Dict, Union
 from transformers.modeling_outputs import Seq2SeqLMOutput
 from transformers import PretrainedConfig, AutoConfig, BartPretrainedModel
-from transformers.generation_utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
+from transformers.generation.utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
 
 from src.utils.control_prefixes import ControlPrefixEncoderForSeq2SeqModels
 from src.utils.modeling_bart import BartForConditionalGeneration
-from src.utils.generation_utils import CustomGenerationMixin
 
 class BartControlPrefixesConfig(PretrainedConfig):
     model_type = "bart"
@@ -41,7 +40,7 @@ class BartControlPrefixesConfig(PretrainedConfig):
         self.control_prefix_len = control_prefix_len
         self.input_dep_prefixes = input_dep_prefixes
 
-class BartForConditionalGenerationWithControlPrefixes(BartPretrainedModel, CustomGenerationMixin):
+class BartForConditionalGenerationWithControlPrefixes(BartPretrainedModel):
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         print(config)

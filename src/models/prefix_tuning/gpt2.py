@@ -5,7 +5,6 @@ from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 from transformers.models.gpt2.modeling_gpt2 import GPT2PreTrainedModel, GPT2LMHeadModel
 
 from src.utils.prefix import PrefixEncoder
-from src.utils.generation_utils import CustomGenerationMixin
 
 class GPT2PrefixTuningConfig(PretrainedConfig):
     attribute_map = {
@@ -41,7 +40,7 @@ class GPT2PrefixTuningConfig(PretrainedConfig):
         self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
         self.use_layer_dep = use_layer_dep
 
-class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel, CustomGenerationMixin):
+class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel):
     def __init__(self, config, pretrained_model=None):
         super().__init__(config)
         print(config)
@@ -76,10 +75,11 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel, CustomGenerationMixin
     def set_input_embeddings(self, new_embeddings):
         self.pretrained_model.set_input_embeddings(new_embeddings=new_embeddings)
 
-    def prepare_inputs_for_generation(self, input_ids, past=None, **kwargs):
+    def prepare_inputs_for_generation(self, input_ids, past_key_values=None, **kwargs):
         token_type_ids = kwargs.get("token_type_ids", None)
+        
         # only last token for inputs_ids if past is defined in kwargs
-        if past:
+        if past_key_values:
             input_ids = input_ids[:, -1].unsqueeze(-1)
             if token_type_ids is not None:
                 token_type_ids = token_type_ids[:, -1].unsqueeze(-1)
@@ -96,19 +96,19 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel, CustomGenerationMixin
             # create position_ids on the fly for batch generation
             position_ids = attention_mask.long().cumsum(-1) - 1
             position_ids.masked_fill_(attention_mask == 0, 1)
-            if past:
+            if past_key_values:
                 position_ids = position_ids[:, -1].unsqueeze(-1)
         else:
             position_ids = None
         
-        if past is None:
-            past = self.prefix_encoder(batch_size=batch_size)
+        if past_key_values is None:
+            past_key_values = self.prefix_encoder(batch_size=batch_size)
             if position_ids is not None:
                 position_ids = position_ids[:, self.prefix_len:]
         
         return {
             "input_ids": input_ids,
-            "past_key_values": past,
+            "past_key_values": past_key_values,
             "use_cache": kwargs.get("use_cache"),
             "position_ids": position_ids,
             "attention_mask": attention_mask,
@@ -145,6 +145,10 @@ class GPT2PrefixTuningWithLMHeadModel(GPT2PreTrainedModel, CustomGenerationMixin
                 attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
 
         labels_for_plm = None if self.config.objective_type == 'sentence' else labels
+
+        position_ids = None if not self.training and input_ids.shape[1] == 1 else position_ids
+        if position_ids is not None:
+            position_ids = position_ids.contiguous()
 
         transformer_outputs = self.pretrained_model(
             input_ids,

@@ -3,11 +3,10 @@ from torch import nn
 from typing import List, Optional, Tuple, Dict, Union
 from transformers.modeling_outputs import Seq2SeqLMOutput
 from transformers import PretrainedConfig, AutoConfig, BartPretrainedModel
-from transformers.generation_utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
+from transformers.generation.utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
 
 from src.utils.prefix import PrefixEncoderForSeq2SeqModels
 from src.utils.modeling_bart import BartForConditionalGeneration
-from src.utils.generation_utils import CustomGenerationMixin
 
 class BartPrefixTuningConfig(PretrainedConfig):
     model_type = "bart"
@@ -39,7 +38,7 @@ class BartPrefixTuningConfig(PretrainedConfig):
         self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
         self.use_layer_dep = use_layer_dep
 
-class BartForConditionalGenerationWithPrefix(BartPretrainedModel, CustomGenerationMixin):
+class BartForConditionalGenerationWithPrefix(BartPretrainedModel):
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         print(config)

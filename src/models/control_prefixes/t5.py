@@ -3,11 +3,10 @@ from torch import nn
 from typing import List, Optional, Tuple, Dict, Union
 from transformers.modeling_outputs import Seq2SeqLMOutput
 from transformers import PretrainedConfig, AutoConfig, T5PreTrainedModel
-from transformers.generation_utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
+from transformers.generation.utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
 
 from src.utils.control_prefixes import ControlPrefixEncoderForSeq2SeqModels
 from src.utils.modeling_t5 import T5ForConditionalGeneration
-from src.utils.generation_utils import CustomGenerationMixin
 
 class T5ControlPrefixesConfig(PretrainedConfig):
     model_type = "t5"
@@ -41,7 +40,7 @@ class T5ControlPrefixesConfig(PretrainedConfig):
         self.control_prefix_len = control_prefix_len
         self.input_dep_prefixes = input_dep_prefixes
 
-class T5ForConditionalGenerationWithControlPrefixes(T5PreTrainedModel, CustomGenerationMixin):
+class T5ForConditionalGenerationWithControlPrefixes(T5PreTrainedModel):
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         print(config)
@@ -129,6 +128,7 @@ class T5ForConditionalGenerationWithControlPrefixes(T5PreTrainedModel, CustomGen
     def generate(
         self, 
         input_ids,
+        conditional_info,
         attention_mask=None,
         **generation_kwargs
         ) -> Union[GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput, torch.LongTensor]:
@@ -136,7 +136,7 @@ class T5ForConditionalGenerationWithControlPrefixes(T5PreTrainedModel, CustomGen
         batch_size = input_ids.shape[0]
         sample_size = generation_kwargs.get('num_beams', 1)
         
-        prefix_key_values = self.prefix_encoder(batch_size, sample_size=sample_size)
+        prefix_key_values = self.prefix_encoder(conditional_info, batch_size=batch_size, sample_size=sample_size)
 
         return self.pretrained_model.generate(
             input_ids=input_ids,
