@@ -1,0 +1,12 @@
+datasets
+transformers==4.26.0
+tqdm
+pandas==1.4.4
+numpy
+evaluate
+nltk
+torchinfo
+gensim
+sacremoses
+yacs
+wandb
