@@ -1,0 +1,41 @@
+CHECKPOINT:
+  INTERVAL: 100
+  RESTORE: false
+  RESTORE_FROM: checkpoints/model_epoch_5.pt
+  SAVE_TO_FOLDER: checkpoints
+LOG:
+  RUN_NAME_POSTFIX: ''
+  WANDB_PROJECT: data2text-prompting
+MODEL:
+  C_PREFIX_LEN: 3
+  FLAT_PREFIX: false
+  INPUT_DEP_PREFIXES:
+  - - cats
+    - 10
+  OBJECTIVE_TYPE: sentence
+  PLM: facebook/bart-base
+  POOL_DROPOUT_PROB: 0.2
+  POOL_LEARNABLE_KEY: false
+  POOL_PREFIX_LEN: 2
+  POOL_SIZE: 10
+  POOL_TOP_K: 3
+  PREFIX_DROPOUT: 0.0
+  PREFIX_HIDDEN_SIZE: 512
+  TASK_PREFIX_LEN: 5
+  TYPE: prefix
+  USE_LAYER_DEP: false
+SYSTEM:
+  DEVICE: cuda
+  NUM_WORKERS: 0
+  SEED: 222
+TRAIN:
+  BATCH_SIZE: 5
+  DATASET: webnlg
+  EVAL_BASE_FOLDER: generation-outputs
+  EVAL_GEN_INTERVAL: 3
+  EVAL_GEN_MODE: beam
+  EVAL_INTERVAL: 1
+  LR: 0.0001
+  NUM_EPOCHS: 5
+  T5_PREAMBLE: ''
+  WEIGHT_DECAY: 0.0
