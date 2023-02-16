@@ -4,7 +4,8 @@ from transformers import PretrainedConfig, AutoConfig
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 from transformers.models.biogpt.modeling_biogpt import BioGptForCausalLM, BioGptPreTrainedModel
 
-from src.utils.prefix import PrefixEncoder
+from src.utils.prefixes.prefix import PrefixEncoder
+from src.models.custom_save import CustomSavePreTrainedModel
 
 class BioGPTPrefixTuningConfig(PretrainedConfig):
     model_type = "biogpt"
@@ -30,7 +31,8 @@ class BioGPTPrefixTuningConfig(PretrainedConfig):
         self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
         self.use_layer_dep = use_layer_dep
 
-class BioGPTPrefixTuningWithLMHeadModel(BioGptPreTrainedModel):
+class BioGPTPrefixTuningWithLMHeadModel(BioGptPreTrainedModel, CustomSavePreTrainedModel):
+    _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']
     def __init__(self, config, pretrained_model=None):
         super().__init__(config)
         print(config)

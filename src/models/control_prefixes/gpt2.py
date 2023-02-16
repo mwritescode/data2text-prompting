@@ -4,7 +4,8 @@ from transformers import PretrainedConfig, AutoConfig
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 from transformers.models.gpt2.modeling_gpt2 import GPT2PreTrainedModel, GPT2LMHeadModel
 
-from src.utils.control_prefixes import ControlPrefixEncoder
+from src.utils.prefixes.control_prefixes import ControlPrefixEncoder
+from src.models.custom_save import CustomSavePreTrainedModel
 
 class GPT2ControlPrefixesConfig(PretrainedConfig):
     attribute_map = {
@@ -42,7 +43,8 @@ class GPT2ControlPrefixesConfig(PretrainedConfig):
         self.control_prefix_len = control_prefix_len
         self.input_dep_prefixes = input_dep_prefixes
 
-class GPT2ControlPrefixesWithLMHeadModel(GPT2PreTrainedModel):
+class GPT2ControlPrefixesWithLMHeadModel(GPT2PreTrainedModel, CustomSavePreTrainedModel):
+    _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']
     def __init__(self, config, pretrained_model=None):
         super().__init__(config)
         print(config)

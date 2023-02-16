@@ -4,7 +4,8 @@ from transformers import PretrainedConfig, AutoConfig
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 from transformers.models.biogpt.modeling_biogpt import BioGptForCausalLM, BioGptPreTrainedModel
 
-from src.utils.control_prefixes import ControlPrefixEncoder
+from src.utils.prefixes.control_prefixes import ControlPrefixEncoder
+from src.models.custom_save import CustomSavePreTrainedModel
 
 class BioGPTControlPrefixesConfig(PretrainedConfig):
     model_type = "biogpt"
@@ -32,7 +33,8 @@ class BioGPTControlPrefixesConfig(PretrainedConfig):
         self.control_prefix_len = control_prefix_len
         self.input_dep_prefixes = input_dep_prefixes
 
-class BioGPTControlPrefixesWithLMHeadModel(BioGptPreTrainedModel):
+class BioGPTControlPrefixesWithLMHeadModel(BioGptPreTrainedModel, CustomSavePreTrainedModel):
+    _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']
     def __init__(self, config, pretrained_model=None):
         super().__init__(config)
         print(config)

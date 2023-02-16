@@ -5,8 +5,9 @@ from transformers.modeling_outputs import Seq2SeqLMOutput
 from transformers import PretrainedConfig, AutoConfig, T5PreTrainedModel
 from transformers.generation.utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
 
-from src.utils.control_prefixes import ControlPrefixEncoderForSeq2SeqModels
+from src.utils.prefixes.control_prefixes import ControlPrefixEncoderForSeq2SeqModels
 from src.utils.modeling_t5 import T5ForConditionalGeneration
+from src.models.custom_save import CustomSavePreTrainedModel
 
 class T5ControlPrefixesConfig(PretrainedConfig):
     model_type = "t5"
@@ -40,7 +41,8 @@ class T5ControlPrefixesConfig(PretrainedConfig):
         self.control_prefix_len = control_prefix_len
         self.input_dep_prefixes = input_dep_prefixes
 
-class T5ForConditionalGenerationWithControlPrefixes(T5PreTrainedModel):
+class T5ForConditionalGenerationWithControlPrefixes(T5PreTrainedModel, CustomSavePreTrainedModel):
+    _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         print(config)

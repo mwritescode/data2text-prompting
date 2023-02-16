@@ -5,8 +5,9 @@ from transformers.modeling_outputs import Seq2SeqLMOutput
 from transformers import PretrainedConfig, AutoConfig, BartPretrainedModel
 from transformers.generation.utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
 
-from src.utils.control_prefixes import ControlPrefixEncoderForSeq2SeqModels
+from src.utils.prefixes.control_prefixes import ControlPrefixEncoderForSeq2SeqModels
 from src.utils.modeling_bart import BartForConditionalGeneration
+from src.models.custom_save import CustomSavePreTrainedModel
 
 class BartControlPrefixesConfig(PretrainedConfig):
     model_type = "bart"
@@ -40,7 +41,8 @@ class BartControlPrefixesConfig(PretrainedConfig):
         self.control_prefix_len = control_prefix_len
         self.input_dep_prefixes = input_dep_prefixes
 
-class BartForConditionalGenerationWithControlPrefixes(BartPretrainedModel):
+class BartForConditionalGenerationWithControlPrefixes(BartPretrainedModel, CustomSavePreTrainedModel):
+    _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         print(config)

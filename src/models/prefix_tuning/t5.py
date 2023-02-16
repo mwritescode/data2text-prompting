@@ -5,8 +5,9 @@ from transformers.modeling_outputs import Seq2SeqLMOutput
 from transformers import PretrainedConfig, AutoConfig, T5PreTrainedModel
 from transformers.generation.utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
 
-from src.utils.prefix import PrefixEncoderForSeq2SeqModels
+from src.utils.prefixes.prefix import PrefixEncoderForSeq2SeqModels
 from src.utils.modeling_t5 import T5ForConditionalGeneration
+from src.models.custom_save import CustomSavePreTrainedModel
 
 class T5PrefixTuningConfig(PretrainedConfig):
     model_type = "t5"
@@ -38,7 +39,8 @@ class T5PrefixTuningConfig(PretrainedConfig):
         self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
         self.use_layer_dep = use_layer_dep
 
-class T5ForConditionalGenerationWithPrefix(T5PreTrainedModel):
+class T5ForConditionalGenerationWithPrefix(T5PreTrainedModel, CustomSavePreTrainedModel):
+    _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         print(config)

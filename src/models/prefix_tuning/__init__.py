@@ -1,0 +1,4 @@
+from src.models.prefix_tuning.bart import BartForConditionalGenerationWithPrefix, BartPrefixTuningConfig
+from src.models.prefix_tuning.t5 import T5ForConditionalGenerationWithPrefix, T5PrefixTuningConfig
+from src.models.prefix_tuning.gpt2 import GPT2PrefixTuningWithLMHeadModel, GPT2PrefixTuningConfig
+from src.models.prefix_tuning.biogpt import BioGPTPrefixTuningWithLMHeadModel, BioGPTPrefixTuningConfig

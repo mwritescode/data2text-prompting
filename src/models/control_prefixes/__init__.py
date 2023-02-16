@@ -1,0 +1,4 @@
+from src.models.control_prefixes.bart import BartControlPrefixesConfig, BartForConditionalGenerationWithControlPrefixes
+from src.models.control_prefixes.t5 import T5ControlPrefixesConfig, T5ForConditionalGenerationWithControlPrefixes
+from src.models.control_prefixes.gpt2 import GPT2ControlPrefixesConfig, GPT2ControlPrefixesWithLMHeadModel
+from src.models.control_prefixes.biogpt import BioGPTControlPrefixesConfig, BioGPTControlPrefixesWithLMHeadModel

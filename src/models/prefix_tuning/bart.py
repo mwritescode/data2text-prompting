@@ -5,8 +5,9 @@ from transformers.modeling_outputs import Seq2SeqLMOutput
 from transformers import PretrainedConfig, AutoConfig, BartPretrainedModel
 from transformers.generation.utils import GreedySearchOutput, SampleOutput, BeamSearchOutput, BeamSampleOutput
 
-from src.utils.prefix import PrefixEncoderForSeq2SeqModels
+from src.utils.prefixes.prefix import PrefixEncoderForSeq2SeqModels
 from src.utils.modeling_bart import BartForConditionalGeneration
+from src.models.custom_save import CustomSavePreTrainedModel
 
 class BartPrefixTuningConfig(PretrainedConfig):
     model_type = "bart"
@@ -38,7 +39,8 @@ class BartPrefixTuningConfig(PretrainedConfig):
         self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
         self.use_layer_dep = use_layer_dep
 
-class BartForConditionalGenerationWithPrefix(BartPretrainedModel):
+class BartForConditionalGenerationWithPrefix(BartPretrainedModel, CustomSavePreTrainedModel):
+    _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']
     def __init__(self, config, pretrained_model=None, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         print(config)
