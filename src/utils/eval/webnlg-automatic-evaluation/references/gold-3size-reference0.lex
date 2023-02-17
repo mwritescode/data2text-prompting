@@ -195,9 +195,6 @@ walt disney studio motion picture distributed the film big hero 6 , in which rya
 the comic character blockbuster , aka mark desmond , was created by gardner fox and carmine infantino .
 the comic character bolt , with the alternative name larry bolatinsky , was created by gary cohn and dan mishkin .
 the comic character of bolt has the alternative name of larry bolatinsky and was created by ernie colon and the comic book writer , gary cohn .
-st louis , part of greater st louis , is led by francis g slay and is the birthplace of alex tyus .
-akeem ayers ' s former team is the new england patriots and his debut team was the tennessee titans who are based in the city of nashville , tennessee .
-akeem adams , who has represented trinidad and tobago at under 20 level , played for united petrotrin fc , whose ground is palo seco .
 purple heart recipient aaron s . daggat was born in maine and , most notably , fought in the battle of fredericksburg .
 ab klink was born in the netherlands , belongs to the christian democratic appeal party and graduated from erasmus university in rotterdam .
 abdul taib mahmud was born in the kingdom of sarawak and he succeeded abdul rahman ya ' kub . stephen yong kuet tze is the deputy to abdul rahman ya ' kub .

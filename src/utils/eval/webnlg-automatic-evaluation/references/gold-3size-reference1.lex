@@ -195,9 +195,6 @@ baymax is a character in the big hero 6 film starring ryan potter and distribute
 the comics character blockbuster , aka mark desmond , was created by gardner fox and carmine infantino .
 larry bolatinsky is the alternative name for the comic character bolt who was created by gary cohn and dan mishkin .
 bolt , a comic character is also known as larry bolatinsky was created by ernie colon and gary cohn .
-alex tyus was born in st louis , ( part of greater st . louis ) , where francis g . slay is the leader .
-akeem ayers , whose former team is the new england patriots , made his debut with the american football team tennessee titans based in the city of nashville .
-akeem adams , who plays for the trinidad and tobago national under - 20 football team previously played for united petrotin fc whose ground is at palo seco .
 born in maine , purple heart recipient , aaron s daggett has fought in battles , the most notable being the battle of fredericksburg .
 born in the netherlands , ab klink attended erasmus university rotterdam and belongs to the christian democratic appeal party .
 abdul taib mahmud ' s birthplace was kingdom of sarawak and he was succeeded by abdul rahman ya ' kub whose deputy was stephen yong kuet tze .

@@ -111,7 +111,7 @@ def meteor_3ref_files_gen(b_reduced, param):
         # extract values sorted by key (natural sorting)
         values = [ids_refs[key] for key in natsorted(ids_refs.keys(), reverse=False)]
         for ref in values:
-            empty_lines = max_refs - len(ref)  # calculate how many empty lines to add (e.g. 3 max references)
+            empty_lines = max_refs - len(ref['text'])  # calculate how many empty lines to add (e.g. 3 max references)
             out = ref['text'] # [lexicalis.lex for lexicalis in ref]
             out_clean = []
             for iter, sentence in enumerate(out):
@@ -153,8 +153,6 @@ def read_participant(data, output_file, teamname):
     output = []
     with open(output_file, 'r', encoding='utf-8') as f:
         output += [unidecode(line.strip()) for line in f if len(line.strip()) > 0]
-
-    print(output[0], output[1])
 
     # per size
     for size in range(1, 8):
@@ -221,7 +219,7 @@ def write_to_file(output_reduced, param, teamname):
 
 if __name__ == '__main__':
     all_data = load_dataset("web_nlg", 'webnlg_challenge_2017', split='test')
-    all_data = all_data.filter(lambda x: x['test_category'] in ['testdata_with_lex', 'testdata_unseen_with_lex'])
+    all_data = all_data.filter(lambda x: x['test_category'] == 'testdata_with_lex')
 
     # generate references
     dir_name = 'references/'
@@ -236,14 +234,15 @@ if __name__ == '__main__':
         os.makedirs('teams/')
     outfolder = 'submissions/'
     outfiles = list(pathlib.Path(outfolder).glob('*.txt'))
-    teams = [outf.replace('.txt', '') for outf in outfiles]
+    teams = [str(outf.name).replace('.txt', '') for outf in outfiles]
     print('Producing evaluation files for the following teams: ', teams)
     with open('teams_list.txt', 'w') as of:
         of.write('\n'.join(teams))
     for outfile, team in zip(outfiles, teams):
+        print(outfile, 'OUT FILE')
         read_participant(all_data, outfile, team)
 
-    folders_to_make = ['eval/', '../results/']
+    folders_to_make = ['eval/'] + [f'../results/{team}' for team in teams]
     for folder in folders_to_make:
         if not os.path.exists(folder) or not os.path.isdir(folder):
-            os.makedirs(folder)
+            os.makedirs(folder, exist_ok=True)

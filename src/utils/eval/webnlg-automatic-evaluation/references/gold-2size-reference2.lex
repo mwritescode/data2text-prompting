@@ -172,17 +172,6 @@ brazilians are one of the ethnic groups in japan where the akita museum of art i
 the asser levy public baths are located in new york city , which brooklyn is a part of .
 adare manor is located in county limerick , which is part of munster .
 the 3arena is located in dublin , which is part of the republic of ireland .
-atlas ii has a diameter of 3 . 04m and its final flight was on the 16th march 1998 .
-the atlas ii was manufactured by lockheed martin and launched from the cape canaveral air force station .
-the audi a1 is manufactured by audi who have a sub - division known as audi e - tron .
-ducati is a subsidiary of audi , which is the manufacturer of the audi a1 .
-the quattro gmbh is a subsidiary of audi , the company that manufacturers the audi a1 .
-douglas r . oberhelman is a key person at caterpillar inc . who provide the engine power for the aidaluna .
-the delta ii , which is comparable to the rocket antares , was launched at the vandenberg air force base .
-juha sipila is a leader in finland where the icebreaker ship aleksey chirikov was built .
-the american submarine nr - 1 was built by general dynamics electric boat , the parent company of which , is general dynamics .
-the a rosa luna is powered by rolls - royce holdings company mtu friedrichshafen made engines .
-the aston martin v8 is assembled in the united kingdom where the ruler is queen elizabeth ii .
 aaron s daggett was awarded the purple heart and fought in the battle of fredericksburg .
 aaron s . daggett , who fought in the battle of gettysburg , was awarded the purple heart .
 the successor of abdul taib mahmud was abdul rahman ya ' kub , whose deputy is stephen yong kuet tze .

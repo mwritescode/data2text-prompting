@@ -195,9 +195,6 @@ the movie big hero 6 stars ryan potter which has baymax as one of its characters
 
 larry bolatinsky is the alternative name for the comic character , bolt who was created by dan mishkin and the comic book writer , gary cohn .
 ernie colon and gary cohn created the comic character bolt , who has the alternative name larry bolatinsky .
-alex tyus was born in st louis , part of greater st louis , the leader of which , is francis g . slay .
-akeem ayers ' debut team was the tennessee titans , who are based in the city of nashville , tennessee . he later played for the new england patriots .
-akeem adams played for united petrotrin f . c . , who play their home games at palo seco ground . he also played for the trinidad and tobago national under 20 team .
 aaron s daggett , born in maine , fought in the battle of fredericksburg . he was given the purple heart .
 
 abdul taib mahmud was born in the kingdom of sarawak . stephen yong kuet tze is the deputy to abdul rahman ya ' kub who was succeeded by abdul taib mahmud .

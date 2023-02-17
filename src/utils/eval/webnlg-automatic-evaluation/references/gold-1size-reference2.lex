@@ -221,16 +221,6 @@ the name of the leader in mexico is silvano aureoles conejo .
 
 david cameron is the leader of the united kingdon .
 
-the rotation period of 1097 vicia is 95040 .
-christian heinrich friedrich peters discovered 109 felicitas .
-
-the average speed of the asteroid 10 hygiea is 16 . 76 kilometres per second .
-1101 clemantis has a periapsis of 445895000000 .
-110 lydia ' s epoch is 31st december 2006 .
-
-james craig watson studied at the university of michigan .
-
-
 the battle of mine run was one of the battles that aaron s . daggett fought at .
 
 

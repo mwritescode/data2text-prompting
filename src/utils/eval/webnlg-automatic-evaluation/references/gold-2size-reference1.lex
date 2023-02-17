@@ -172,17 +172,6 @@ the asser levy public baths are located in new york city which is in the united 
 asser levy public baths are located in new york city which contains brooklyn .
 adare manor is located in county limerick which is part of munster .
 the 3arena is located in dublin in the republic of ireland .
-the final flight of atlas ii , which has a diameter of 3 . 04m , was on 16 march 1998 .
-the atlas ii , manufactured by lockheed martin , was launched from cape canaveral air force station .
-audi which is the manufacturer of the audi a1 has a division called the audi e - tron .
-the audi a1 is made by audi who also own ducati .
-the quattro gmbh is a subsidiary of the audi who manufacture the audi a1 .
-the power type of the aidaluna is an engine manufactured by caterpillar inc where douglas r oberhelman is a key person .
-the rocket antares is comparable to the delta ii which was launched from the vandenberg air force base .
-the icebreaker , the aleksey chirikov , is built by finland , where the leader is juha sipila .
-general dynamics is the parent company of the general dynamics electric boat co which built the american submarine nr - 1 .
-the a - rosa luna is powered by the rolls - royce holdings owned , mtu friedrichshafen , made engines .
-aston martin v8 was assembled in the united kingdom which is ruled by queen elizabeth ii .
 aaron s daggett , fought in battles , most notably the battle of fredericksburg , he was awarded the purple heart .
 aaron s . daggett fought in the battle of gettysburg and was awarded the purple heart .
 abdul rahman ya ' kub , who succeeded abdul taib mahmud , has a deputy named stephen yong kuet tze .

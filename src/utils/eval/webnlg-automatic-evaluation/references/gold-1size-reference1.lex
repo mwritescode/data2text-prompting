@@ -220,16 +220,6 @@ shumai is a dish from china .
 peanut sauce is an ingredient of siomay .
 malays are an ethnic group in sumatra .
 david cameron is a leader in the united kingdom .
-the epoch date of 1097 vicia is 2006 . 12 . 31 .
-1097 vicia has a rotation period of 95040 . 0 .
-109 felicitas was discovered by christian heinrich friedrich peters .
-the periapsis of 109 felicitas is 283326000000 . 0 .
-10 hygiea has an average speed of 16 . 76 kilometres per second .
-1101 clematis has a periapsis of 445895000000 . 0 .
-31 december 2006 is the epoch of 110 lydia .
-11264 claudiomaccone has a temperature of 173 . 0 kelvins .
-james craig watson ' s alma mater is the university of michigan .
-n . r . pogson was born in nottingham .
 aaron s . daggett was awarded the purple heart .
 aaron s . daggett fought in the battle of mine run .
 ab klink was born in stellendam , netherlands .

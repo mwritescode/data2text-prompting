@@ -347,14 +347,3 @@ william anders ( born in british hong kong ) was a crew member of apollo 8 .
 
 
 
-
-
-
-
-
-
-
-
-
-
-

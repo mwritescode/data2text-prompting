@@ -1,15 +1,3 @@
-carnival corporation & plc is the parent company of costa crociere which is the owner of the aidastella . the aidastella was built by meyer werft and is operated by aida cruises which is based in germany .
-the aidastella was built by meyer werft and operated by the aida cruise line . it is 253260 . 0 millimetres long with a beam of 32 . 2 metres and a top speed of 38 . 892 km / h .
-the alco rs - 3 was built by the american locomotive company and was produced between may 1950 and august 1956 . it has a cylinder count of 12 , is 17068 . 8 ( millimetres ) in length , and has a four - stroke engine .
-the alco rs - 3 , built by the american locomotive company , has a v12 cylinder engine and is 17068 . 8mm long . it was produced from may 1950 to august 1956 .
-the alv x - 1 originated in the united states where the inhabitants are known as americans and include the ethnic group of native americans . the capital city is washington dc and the national anthem is the star spangled banner .
-the amc matador , also known as american motors matador , was assembled in thames , new zealand . the amc matador is a mid - size station wagon with a v8 engine type .
-a transport london company called p & o owns the alhambra ship which contains a humphrys , tennant and dykes power type and has a ship beam of 8 . 3 m . the ship was built by the samuda brothers .
-the amc matador is manufactured by american motors , whose subsidiary is the wheel horse and successor is eagle . american motors was acquired by chrysler and roy d chapin jr is a key person there .
-the american submarine nr - 1 which was launched on january 25th 1969 has a top speed of 8 . 334 km / h . it has a 3 . 8m ship beam , a draft of 4 . 6m and measures 45000 mms in length .
-the antares rocket is comparable to the delta ii , which originates from the united states . the launch site of the antares was the mid atlantic regional spaceport launch pad 0 , which is also associated with the rocket minotaur iv .
-the antares rocket ' s maiden flight was on the 28th october 2014 and its last flight on 2014 - 07 - 13 . its launch site was the mid - atlantic regional spaceport launch pad 0 . it is manufactured at the yuzhnoye design office and is 3 . 9 m in diameter .
-the antares rocket , manufactured by the yuzhnoye design office , was launched from the mid - atlantic regional spaceport launch pad 0 . at 3 . 9m in diameter , the antares rocket had its maiden flight on the 28th october , 2014 and final flight on the 18th of september , 2013 .
 
 administrative science quarterly was published by cornell university , located in ithaca , new york , and affiliated with the association of public and land grant universities , as well as with the association of american universities . president of cornell university is elizabeth garrett .
 english is the language spoken in both great britain and the united states . however it is in the us that a loyal character dancer was published by soho press . it is in this country that the ethnic group of african americans can be found .

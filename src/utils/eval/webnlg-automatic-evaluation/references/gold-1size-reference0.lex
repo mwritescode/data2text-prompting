@@ -220,16 +220,6 @@ china is the country shumai comes from .
 peanut sauce is an ingredient in siomay .
 malays are an ethnic group of sumatra .
 david cameron is the leader of the united kingdom .
-the epoch of 1097 vicia is on 13 january 2016 .
-the rotation period of 1097 vicia is 95040 . 0 .
-christian heinrich friedrich peters was the discoverer of 109 felicitas .
-109 felicitas has a periapsis of 283326000000 . 0 .
-the average speed of 10 hygiea is 16 . 76 km per secs .
-the periapsis of 1101 clematis is 445895000000 . 0 .
-110 lydia has an epoch date of december 31st 2006 .
-11264 claudiomaccone has a temperature of 173 . 0 ( kelvins ) .
-james craig watson ' s alma mater was the university of michigan .
-n r pogson was born in nottingham .
 aaron s daggett was awarded the purple heart .
 the battle of mine run was one fought by aaron s daggett .
 stellendam , netherlands is the birthplace of ab klink .

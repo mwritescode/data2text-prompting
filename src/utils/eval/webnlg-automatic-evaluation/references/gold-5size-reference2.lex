@@ -1,15 +1,3 @@
-carnival corporation & plc is the parent company of costa crociere , who own the aidastella . aidastella was built by meyer werft and is operated by aida cruise line , located in germany . .
-the aidastella is operated by aida cruise line and was built by meyer werft . it is 253260 . 0 millimetres in length , has a beam of 32 . 2m and a top speed of 38 . 892 km / h .
-the alco rs - 3 was made from may 1950 until august 1956 by the american locomotive company . it is 17068 . 8mm long , has a four - stroke engine and 12 cyclinders .
-the alco rs - 3 was produced from may 1950 to august 1956 by the american locomotive company . it has a v12 , 12 cylinder engine and is 17068 . 8mm long .
-the united states , has its capital at washington d . c . and the national anthem as the star spangled banner . it is home to americans , native americans and the alv x - 1 .
-the amc matador aka the american motors matador , is assemebled in thames , new zealand , has a v8 engine , and is classified as a mid size car .
-the alhambra , with an 8 . 3m ship beam , is powered by a a humphrys , tennant and dykes . it is owned by london based , p & o and built by the samuda brothers .
-roy d chapin jr is a key person at american motors who manufactured the amc matador . the company was acquired by chrysler , was succeeded by eagle ad has a subsidiary known as the wheel horse .
-the american submarine nr - 1 that was launched on 25th of january 1969 has a top speed of 8 . 334 km / h . it has a draft of 4 . 6m , a ship beam of 3 . 8m and has a total length of 45000 mms .
-the minotaur iv rocket is associated with the mid - atlantic regional spaceport launch pad 0 which is also the launch site of the antares rocket . the rocket is comparable to the delta ii from the united states .
-the antares rocket was made by the yuzhnoye design office and is 3 . 9 m in diameter . it launched at the mid - atlantic regional spaceport launch pad 0 making the first flight on 28 october 2014 and the final flight on 13 july 2014 .
-the antares rocket , which was manufactured at the yuzhnoye design office , made its first flight on october 28 , 2014 and had its final flight on the 18th of september 2013 . it is 3 . 9 m in diameter , and was launched from the mid - atlantic regional spaceport launch pad 0 .
 
 affiliated with the association of public and land grant universities and the association of american universities . , cornell university is the publisher of the administrative science quarterly . the university is located in ithaca new york and the president is elizabeth garrett .
 a loyal character dancer is published by soho press in the united states , where there is an ethnic group called the african americans . english is the language of the united states and also of great britain .

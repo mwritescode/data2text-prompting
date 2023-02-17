@@ -6,8 +6,9 @@ readarray -t teams < teams_list.txt
 echo "${teams[@]}"
 
 # BLEU
-for TEAMR in $teams
+for team in $teams
 do 
+    export TEAMR=$team
     echo $TEAMR
 
     . bleu_eval_3ref.sh

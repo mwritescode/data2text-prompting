@@ -5,7 +5,7 @@ if __name__ == '__main__':
     print('##################### Summary ##########################')
 
     team = sys.argv[1]
-    outfolder = 'results/team/'
+    outfolder = f'results/{team}/'
 
     with open(outfolder + 'bleu_seen.txt') as f:
         bleu_seen = float(f.read().strip().split()[2].replace(',',''))
