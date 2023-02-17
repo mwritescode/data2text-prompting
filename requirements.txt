@@ -10,3 +10,4 @@ gensim
 sacremoses
 yacs
 wandb
+natsort
