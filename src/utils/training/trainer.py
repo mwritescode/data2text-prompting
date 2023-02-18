@@ -239,10 +239,12 @@ class Trainer:
                 references, generated = self._save_gen_results_to_wandb(self.val_loader_gen, outfolder=f'val-final')
                 val_results = self.bleu.compute(predictions=generated, references=references)
                 print('VALIDATION RESULTS:', val_results)
+                wandb.run.summary["val_bleu"] = val_results['bleu']
 
                 references, generated = self._save_gen_results_to_wandb(self.test_loader, outfolder=f'test-final')
                 test_results = self.bleu.compute(predictions=generated, references=references)
                 print('TEST RESULTS:', test_results)
+                wandb.run.summary["test_bleu"] = test_results['bleu']
 
         wandb.finish()
 
