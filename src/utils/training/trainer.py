@@ -45,11 +45,11 @@ class Trainer:
     
     def _get_model_data(self, data, use_labels=True):
         in_data = {
-            'input_ids': data[0].input_ids.to(self.device),
-            'attention_mask': data[0].attention_mask.to(self.device)
+            'input_ids': data[0]['input_ids'].to(self.device),
+            'attention_mask': data[0]['attention_mask'].to(self.device)
         }
         if use_labels:
-            labels = data[1].input_ids.to(self.device)
+            labels = data[1]['input_ids'].to(self.device)
             labels[labels == self.tokenizer.pad_token_id] = -100
             in_data['labels'] = labels
     
@@ -193,6 +193,7 @@ class Trainer:
 
     def fit(self):  
         starting_epoch = 0
+        os.makedirs(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, exist_ok=True)
         if self.cfg.CHECKPOINT.RESTORE:
             starting_epoch, wandb_id = self._restore_checkpoint(path=self.cfg.CHECKPOINT.RESTORE_FROM)
         else:
@@ -211,7 +212,6 @@ class Trainer:
             # track hyperparameters and run metadata
             config={
             **self.cfg,
-            "architecture": "resnet18",
             "dataset": self.cfg.TRAIN.DATASET,
             })
 
@@ -225,7 +225,7 @@ class Trainer:
             else:
                 wandb.log({'train': log_dict}, step=i)
             
-            if (i % self.eval_gen_interval) == 0:
+            if ((i+1) % self.eval_gen_interval) == 0:
                 _ = self._save_gen_results_to_wandb(self.val_loader_gen, outfolder=f'val-{i}')
 
             if (i % self.cfg.CHECKPOINT.INTERVAL) == 0:
