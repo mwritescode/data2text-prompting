@@ -110,14 +110,16 @@ class Trainer:
         else:
             self.model.save_pretrained(path)
     
-    def _restore_checkpoint(self, path):
+    def _restore_checkpoint(self, path, model_only=False):
         print('Restoring checkpoint ', path)
         checkpoint = torch.load(path)
         self.model.load_state_dict(checkpoint['model_state_dict'])
-        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-        self.scheduler.load_state_dict(checkpoint['scheduler'])
-        starting_epoch = checkpoint['epoch'] + 1
-        wandb_id = checkpoint['wandb_id']
+        starting_epoch, wandb_id = 0, 0
+        if not model_only:
+            self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            self.scheduler.load_state_dict(checkpoint['scheduler'])
+            starting_epoch = checkpoint['epoch'] + 1
+            wandb_id = checkpoint['wandb_id']
         return starting_epoch, wandb_id
     
     def _set_seed(self, seed=42):
@@ -215,6 +217,7 @@ class Trainer:
             "dataset": self.cfg.TRAIN.DATASET,
             })
 
+        val_losses = []
         for i in range(starting_epoch, self.num_epochs):
             log_dict = self._train_epoch(i)
             log_dict['lr'] = self.scheduler.get_last_lr()[0]
@@ -222,6 +225,7 @@ class Trainer:
             if (i % self.eval_interval) == 0:
                 eval_log_dict = self._eval_epoch(i)
                 wandb.log({'train':log_dict, 'val': eval_log_dict}, step=i)
+                val_losses.append(eval_log_dict['loss'])
             else:
                 wandb.log({'train': log_dict}, step=i)
             
@@ -232,19 +236,22 @@ class Trainer:
                 path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{i}.pt')
                 self._save_checkpoint(epoch=i, path=path, resume=True)
             
-            if i == self.num_epochs -1:
-                path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, 'final')
-                self._save_checkpoint(epoch=i, path=path, resume=False)
+        optimal_idx = np.argmin(val_losses)
+        restore_path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{optimal_idx}.pt')
+        _ = self._restore_checkpoint(restore_path, model_only=True)
 
-                references, generated = self._save_gen_results_to_wandb(self.val_loader_gen, outfolder=f'val-final')
-                val_results = self.bleu.compute(predictions=generated, references=references)
-                print('VALIDATION RESULTS:', val_results)
-                wandb.run.summary["val_bleu"] = val_results['bleu']
+        path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, 'final')
+        self._save_checkpoint(epoch=i, path=path, resume=False)
 
-                references, generated = self._save_gen_results_to_wandb(self.test_loader, outfolder=f'test-final')
-                test_results = self.bleu.compute(predictions=generated, references=references)
-                print('TEST RESULTS:', test_results)
-                wandb.run.summary["test_bleu"] = test_results['bleu']
+        references, generated = self._save_gen_results_to_wandb(self.val_loader_gen, outfolder=f'val-final')
+        val_results = self.bleu.compute(predictions=generated, references=references)
+        print('VALIDATION RESULTS:', val_results)
+        wandb.run.summary["val_bleu"] = val_results['bleu']
+
+        references, generated = self._save_gen_results_to_wandb(self.test_loader, outfolder=f'test-final')
+        test_results = self.bleu.compute(predictions=generated, references=references)
+        print('TEST RESULTS:', test_results)
+        wandb.run.summary["test_bleu"] = test_results['bleu']
 
         wandb.finish()
 

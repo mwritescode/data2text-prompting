@@ -6,8 +6,7 @@ from src.data.utils.matching import UnseenCategoryMatcher
 COLS_TO_KEEP = ['modified_triple_sets', 'lex', 'category']
 
 TESTSET_CATEGORY_MAP = {
-    'a': ['testdata_with_lex', 'testdata_unseen_with_lex'],
-    's': ['testdata_with_lex'],
+    'a': ['testdata_with_lex']
     'u': ['testdata_unseen_with_lex']
 }
 
