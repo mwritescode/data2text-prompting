@@ -78,7 +78,7 @@ if __name__ == '__main__':
     data_val_expl = dataset_class('dev', explode_dev=True, include_category=has_category)
     data_test = dataset_class('test', include_category=has_category)
 
-    separator = tokenizer.decode(model.config.pad_token_id)
+    separator = tokenizer.decode(model.config.eos_token_id)
     if 'gpt' in cfg.MODEL.PLM:
         collator = DataCollatorForDecoderOnlyModel(
             has_category=has_category, tokenizer=tokenizer, separator=separator)
