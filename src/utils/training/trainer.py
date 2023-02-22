@@ -254,6 +254,10 @@ class Trainer:
         test_results = self.bleu.compute(predictions=generated, references=references)
         print('TEST RESULTS:', test_results)
         wandb.run.summary["test_bleu"] = test_results['bleu']
+        
+        artifact = wandb.Artifact(wandb_run_name, type='model')
+        artifact.add_dir(path)
+        wandb.log_artifact(artifact)
 
         wandb.finish()
 
