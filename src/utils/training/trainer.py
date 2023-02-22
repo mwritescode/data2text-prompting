@@ -143,6 +143,8 @@ class Trainer:
             'pad_token_id': self.tokenizer.pad_token_id,
             'early_stopping': True
         }
+        if 'gpt2' in self.model.__class__.__name__.lower():
+            shared_kwargs['bad_words_ids'] = [[628], [198]]
         if self.cfg.TRAIN.EVAL_GEN_MODE == 'beam':
             shared_kwargs.update({
                 'num_beams': 5,
