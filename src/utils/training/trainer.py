@@ -220,6 +220,7 @@ class Trainer:
             })
 
         val_losses = []
+        previous_loss = 1000.0
         for i in range(starting_epoch, self.num_epochs):
             log_dict = self._train_epoch(i)
             log_dict['lr'] = self.scheduler.get_last_lr()[0]
@@ -234,9 +235,14 @@ class Trainer:
             if ((i+1) % self.eval_gen_interval) == 0:
                 _ = self._save_gen_results_to_wandb(self.val_loader_gen, outfolder=f'val-{i}')
 
-            if (i % self.cfg.CHECKPOINT.INTERVAL) == 0:
-                path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{i}.pt')
-                self._save_checkpoint(epoch=i, path=path, resume=True)
+            if (i % self.cfg.CHECKPOINT.INTERVAL) == 0 and val_losses[-1] <= previous_loss:
+                    path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{i}.pt')
+                    self._save_checkpoint(epoch=i, path=path, resume=True)
+                    path_to_remove = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{i-1}.pt')
+                    if os.path.exists(path_to_remove):
+                        os.remove(path_to_remove)
+                        
+            previous_loss = val_losses[-1]
             
         optimal_idx = np.argmin(val_losses)
         restore_path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{optimal_idx}.pt')
