@@ -236,7 +236,7 @@ class Trainer:
                 val_results = self.bleu.compute(predictions=generated, references=references)
                 print(f'VALIDATION RESULTS EPOCH {i}:', val_results)
                 val_bleus.append(val_results['bleu'])
-                wandb.log({'val': {'bleu': val_results['bleu']}})
+                wandb.log({'val': {'bleu': val_results['bleu']}}, step=i)
 
             if (i % self.cfg.CHECKPOINT.INTERVAL) == 0 and val_bleus[-1] >= previous_bleu:
                     path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{i}.pt')
