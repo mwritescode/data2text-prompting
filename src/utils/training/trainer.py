@@ -192,7 +192,7 @@ class Trainer:
         print(len(references), len(generated))
         table_data = [[ref, gen] for ref, gen in zip(references, generated) ]
         gen_table = wandb.Table(columns=['references', 'generated'], data=table_data)
-        wandb.log({f'generated-{outfolder}': gen_table})
+        wandb.log({f'generated-{outfolder}': gen_table}, commit=False)
         return references, generated
 
     def fit(self):  
@@ -227,16 +227,18 @@ class Trainer:
 
             if (i % self.eval_interval) == 0:
                 eval_log_dict = self._eval_epoch(i)
-                wandb.log({'train':log_dict, 'val': eval_log_dict}, step=i)
+                wandb_dict = {'train':log_dict, 'val': eval_log_dict}
             else:
-                wandb.log({'train': log_dict}, step=i)
+                wandb_dict = {'train': log_dict}
             
             if ((i+1) % self.eval_gen_interval) == 0:
                 references, generated = self._save_gen_results_to_wandb(self.val_loader_gen, outfolder=f'val-{i}')
                 val_results = self.bleu.compute(predictions=generated, references=references)
                 print(f'VALIDATION RESULTS EPOCH {i}:', val_results)
                 val_bleus.append(val_results['bleu'])
-                wandb.log({'val': {'bleu': val_results['bleu']}}, step=i)
+                wandb_dict['val']['bleu'] = val_results['bleu']
+            
+            wandb.log(wandb_dict, step=i, commit=True)
 
             if (i % self.cfg.CHECKPOINT.INTERVAL) == 0 and val_bleus[-1] >= previous_bleu:
                     path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{i}.pt')
