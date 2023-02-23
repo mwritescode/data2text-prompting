@@ -87,7 +87,6 @@ class PrefixEncoderWithPromptPool(nn.Module):
         self.n_embd = config.hidden_size // config.num_attention_heads
         self.all_prefix_len = config.prefix_len + config.top_k * config.input_dep_prompt_len
 
-
         self.use_layer_dep =config.use_layer_dep
 
         self.prefix_tokens = torch.arange(self.prefix_len).long()
@@ -109,7 +108,8 @@ class PrefixEncoderWithPromptPool(nn.Module):
             pool_size=config.pool_size,
             top_k=config.top_k,
             embed_dim=config.hidden_size,
-            use_learnable_key=config.use_learnable_key)
+            use_learnable_key=config.use_learnable_key,
+            random_idxs_prob=config.random_idxs_prob)
         
         self.dropout = torch.nn.Dropout(config.prefix_dropout_prob)
         self.pool_dropout = torch.nn.Dropout(config.pool_dropout_prob)

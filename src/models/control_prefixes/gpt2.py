@@ -27,6 +27,7 @@ class GPT2ControlPrefixesConfig(PretrainedConfig):
         objective_type='sentence',
         control_prefix_len=3,
         input_dep_prefixes={'cats': 10},
+        use_layer_dep=False,
         **kwargs):
         super().__init__(**kwargs)
         self.plm_name_or_path = plm_name_or_path
@@ -42,6 +43,7 @@ class GPT2ControlPrefixesConfig(PretrainedConfig):
         self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
         self.control_prefix_len = control_prefix_len
         self.input_dep_prefixes = input_dep_prefixes
+        self.use_layer_dep = use_layer_dep
 
 class GPT2ControlPrefixesWithLMHeadModel(GPT2PreTrainedModel, CustomSavePreTrainedModel):
     _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']

@@ -24,6 +24,12 @@ class T5PrefixPoolConfig(PretrainedConfig):
         use_encoder_prefix=True,
         use_cross_prefix=True,
         use_layer_dep=False,
+        pool_size=10,
+        input_dep_prompt_len=2,
+        top_k=2,
+        use_learnable_key=False,
+        pool_dropout_prob=0.2,
+        random_idxs_prob=0.3,
         **kwargs):
         super().__init__(**kwargs)
         self.plm_name_or_path = plm_name_or_path
@@ -38,6 +44,12 @@ class T5PrefixPoolConfig(PretrainedConfig):
         self.update(plm_config)
         self.objective_type = objective_type # or 'sentence' or 'token' which is the classical objective
         self.use_layer_dep = use_layer_dep
+        self.pool_size = pool_size
+        self.input_dep_prompt_len = input_dep_prompt_len
+        self.top_k = top_k
+        self.use_learnable_key = use_learnable_key
+        self.pool_dropout_prob = pool_dropout_prob
+        self.random_idx_prob = random_idxs_prob
 
 class T5ForConditionalGenerationWithPrefixPool(T5PreTrainedModel, CustomSavePreTrainedModel):
     _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']

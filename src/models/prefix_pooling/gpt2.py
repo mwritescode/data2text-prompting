@@ -31,6 +31,7 @@ class GPT2PrefixPoolConfig(PretrainedConfig):
         top_k=2,
         use_learnable_key=False,
         pool_dropout_prob=0.2,
+        random_idxs_prob=0.3,
         **kwargs):
         super().__init__(**kwargs)
         self.plm_name_or_path = plm_name_or_path
@@ -50,6 +51,7 @@ class GPT2PrefixPoolConfig(PretrainedConfig):
         self.top_k = top_k
         self.use_learnable_key = use_learnable_key
         self.pool_dropout_prob = pool_dropout_prob
+        self.random_idx_prob = random_idxs_prob
 
 class GPT2PrefixPoolWithLMHeadModel(GPT2PreTrainedModel, CustomSavePreTrainedModel):
     _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']
