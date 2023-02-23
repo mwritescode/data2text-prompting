@@ -219,8 +219,8 @@ class Trainer:
             "dataset": self.cfg.TRAIN.DATASET,
             })
 
-        val_losses = []
-        previous_loss = 1000.0
+        val_bleus = []
+        previous_bleu = 0.0
         for i in range(starting_epoch, self.num_epochs):
             log_dict = self._train_epoch(i)
             log_dict['lr'] = self.scheduler.get_last_lr()[0]
@@ -228,33 +228,33 @@ class Trainer:
             if (i % self.eval_interval) == 0:
                 eval_log_dict = self._eval_epoch(i)
                 wandb.log({'train':log_dict, 'val': eval_log_dict}, step=i)
-                val_losses.append(eval_log_dict['loss'])
             else:
                 wandb.log({'train': log_dict}, step=i)
             
             if ((i+1) % self.eval_gen_interval) == 0:
-                _ = self._save_gen_results_to_wandb(self.val_loader_gen, outfolder=f'val-{i}')
+                references, generated = self._save_gen_results_to_wandb(self.val_loader_gen, outfolder=f'val-{i}')
+                val_results = self.bleu.compute(predictions=generated, references=references)
+                print(f'VALIDATION RESULTS EPOCH {i}:', val_results)
+                val_bleus.append(val_results['bleu'])
+                wandb.log({'val': {'bleu': val_results['bleu']}})
 
-            if (i % self.cfg.CHECKPOINT.INTERVAL) == 0 and val_losses[-1] <= previous_loss:
+            if (i % self.cfg.CHECKPOINT.INTERVAL) == 0 and val_bleus[-1] >= previous_bleu:
                     path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{i}.pt')
                     self._save_checkpoint(epoch=i, path=path, resume=True)
                     path_to_remove = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{i-1}.pt')
                     if os.path.exists(path_to_remove):
                         os.remove(path_to_remove)
                         
-            previous_loss = val_losses[-1]
+            previous_bleu = val_bleus[-1]
             
-        optimal_idx = np.argmin(val_losses)
+        optimal_idx = np.argmax(val_bleus)
         restore_path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, f'epoch_{optimal_idx}.pt')
         _ = self._restore_checkpoint(restore_path, model_only=True)
 
         path = os.path.join(self.cfg.CHECKPOINT.SAVE_TO_FOLDER, 'final')
         self._save_checkpoint(epoch=i, path=path, resume=False)
 
-        references, generated = self._save_gen_results_to_wandb(self.val_loader_gen, outfolder=f'val-final')
-        val_results = self.bleu.compute(predictions=generated, references=references)
-        print('VALIDATION RESULTS:', val_results)
-        wandb.run.summary["val_bleu"] = val_results['bleu']
+        wandb.run.summary["val_bleu"] = val_bleus[optimal_idx]
 
         references, generated = self._save_gen_results_to_wandb(self.test_loader, outfolder=f'test-final')
         test_results = self.bleu.compute(predictions=generated, references=references)
