@@ -41,7 +41,7 @@ class BioGPTPrefixPoolConfig(PretrainedConfig):
         self.top_k = top_k
         self.use_learnable_key = use_learnable_key
         self.pool_dropout_prob = pool_dropout_prob
-        self.random_idx_prob = random_idxs_prob
+        self.random_idxs_prob = random_idxs_prob
 
 class BioGPTPrefixPoolWithLMHeadModel(BioGptPreTrainedModel, CustomSavePreTrainedModel):
     _keys_to_ignore_on_load_missing = [r'\b(pretrained_model.)']
