@@ -125,6 +125,9 @@ class PrefixEncoderWithPromptPool(nn.Module):
         
         input_dep_prefix = self.prompt_pool(inputs_embeds)
         input_dep_prefix = self.pool_dropout(self.trans(input_dep_prefix))
+        if inputs_embeds.shape[0] < past_key_values.shape[0]:
+            input_dep_prefix = input_dep_prefix.repeat(past_key_values.shape[0]//inputs_embeds.shape[0], 1, 1)
+
         past_key_values = torch.cat([past_key_values, input_dep_prefix], dim=1)
         
         past_key_values = past_key_values.view(
