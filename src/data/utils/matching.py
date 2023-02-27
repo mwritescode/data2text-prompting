@@ -28,7 +28,10 @@ class UnseenCategoryMatcher:
         return out['match'].iloc[0]
     
     def _build_lookup_table(self, pretrained_embeddings, dataset, filename):
-        unseen_vals = set(dataset.unique('category')) - set(self.seen_categories)
+        if isinstance(dataset, pd.DataFrame):
+            unseen_vals = set(dataset['HPO_cat'].unique()) - set(self.seen_categories)
+        else:
+            unseen_vals = set(dataset.unique('category')) - set(self.seen_categories)
         matches = {'category': [], 'match': []}
         lowercase_cats = [[v.lower() for v in re.findall(CAMEL_CASE_SPLIT, cat)] for cat in self.seen_categories]
         for val in unseen_vals:

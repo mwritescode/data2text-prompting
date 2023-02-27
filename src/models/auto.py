@@ -38,21 +38,24 @@ AUTO_PREFIX_TUNING = OrderedDict([
     ('gpt2', [GPT2PrefixTuningConfig, GPT2PrefixTuningWithLMHeadModel]),
     ('biogpt', [BioGPTPrefixTuningConfig, BioGPTPrefixTuningWithLMHeadModel]),
     ('bart', [BartPrefixTuningConfig, BartForConditionalGenerationWithPrefix]),
-    ('t5', [T5PrefixTuningConfig, T5ForConditionalGenerationWithPrefix])
+    ('t5', [T5PrefixTuningConfig, T5ForConditionalGenerationWithPrefix]),
+    ('SciFive', [T5PrefixTuningConfig, T5ForConditionalGenerationWithPrefix])
 ])
 
 AUTO_CONTROL_PREFIXES = OrderedDict([
     ('gpt2', [GPT2ControlPrefixesConfig, GPT2ControlPrefixesWithLMHeadModel]),
     ('biogpt', [BioGPTControlPrefixesConfig, BioGPTControlPrefixesWithLMHeadModel]),
     ('bart', [BartControlPrefixesConfig, BartForConditionalGenerationWithControlPrefixes]),
-    ('t5', [T5ControlPrefixesConfig, T5ForConditionalGenerationWithControlPrefixes])
+    ('t5', [T5ControlPrefixesConfig, T5ForConditionalGenerationWithControlPrefixes]),
+    ('SciFive', [T5ControlPrefixesConfig, T5ForConditionalGenerationWithControlPrefixes]),
 ])
 
 AUTO_PREFIX_POOLING = OrderedDict([
     ('gpt2', [GPT2PrefixPoolConfig, GPT2PrefixPoolWithLMHeadModel]),
     ('biogpt', [BioGPTPrefixPoolConfig, BioGPTPrefixPoolWithLMHeadModel]),
     ('bart', [BartPrefixPoolConfig, BartForConditionalGenerationWithPrefixPool]),
-    ('t5', [T5PrefixPoolConfig, T5ForConditionalGenerationWithPrefixPool])
+    ('t5', [T5PrefixPoolConfig, T5ForConditionalGenerationWithPrefixPool]),
+    ('SciFive', [T5PrefixPoolConfig, T5ForConditionalGenerationWithPrefixPool])
 ])
 
 class AutoModelCustom:
