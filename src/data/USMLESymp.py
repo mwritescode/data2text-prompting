@@ -8,7 +8,10 @@ DATAPATH = 'data/USMLE-Symp_triplets_v2.pickle'
 
 class USMLESymp(Dataset):
     def __init__(self, split, data_path=DATAPATH, explode_dev=False, include_category=False):
-        self.data = pd.read_pickle(data_path)
+        try:
+            self.data = pd.read_pickle(data_path)
+        except:
+            self.data = pd.read_parquet(data_path.replace('.pickle', '.parquet'))
         if include_category:
             cats = natsorted(self.data[self.data['split'] == 'train']['HPO_cat'].unique())
             self.category_mapping = {cat: i for i, cat in zip(range(len(cats)), cats)}
