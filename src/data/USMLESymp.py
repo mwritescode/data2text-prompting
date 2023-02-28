@@ -38,10 +38,10 @@ class USMLESymp(Dataset):
             category = elem['HPO_cat']
             if category not in self.category_mapping.keys():
                 category = self.matcher.match(category)
-            out += (self.category_mapping(category))
+            out += (self.category_mapping[category],)
         
         if self.include_polarity:
-            out += (POLARITY_MATCHING[elem['polarity']])
+            out += (POLARITY_MATCHING[elem['polarity']],)
            
         return out
     
