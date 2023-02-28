@@ -24,7 +24,7 @@ CAT2IDX = {
 }
 
 class webNLG(Dataset):
-    def __init__(self, split, test_mode='a', include_category=False, explode_dev=False):
+    def __init__(self, split, test_mode='a', include_category=False, explode_dev=False, include_polarity=False):
         self.data = load_dataset("web_nlg", 'webnlg_challenge_2017', split=split)
         self.split = split
         self.include_category = include_category
@@ -33,6 +33,7 @@ class webNLG(Dataset):
             self.data = self.data.filter(lambda x: x['test_category'] in TESTSET_CATEGORY_MAP[test_mode])
         self.data = self.data.remove_columns([col for col in self.data.column_names if col not in COLS_TO_KEEP])
         self.data = self.data.map(self.__preprocess_row, remove_columns=['modified_triple_sets', 'lex'])
+        self.include_polarity = include_polarity
         
         if split == 'train':
             self.data = self.data.filter(lambda x: len(x['label']) > 0)

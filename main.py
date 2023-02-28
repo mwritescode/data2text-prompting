@@ -57,7 +57,10 @@ if __name__ == '__main__':
     cfg = get_cfg_defaults()
     cfg.merge_from_file(args.config_path)
 
-    has_category = cfg.MODEL.TYPE == 'control'
+    input_dep_prefixes = {cat_tuple[0]: cat_tuple[1] for cat_tuple in cfg.MODEL.INPUT_DEP_PREFIXES}
+
+    has_category = cfg.MODEL.TYPE == 'control' and 'cats' in input_dep_prefixes.keys()
+    has_polarity = cfg.MODEL.TYPE == 'control' and 'polarity' in input_dep_prefixes.keys()
     model_name = cfg.MODEL.PLM
     model = get_model_from_cfg(cfg)
     torchinfo.summary(model)

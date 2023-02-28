@@ -55,7 +55,9 @@ class Trainer:
     
         if len(data) > 2:
             # Control prefixes setting
-            in_data['conditional_info'] = {'cats': data[2].to(self.device)}
+            cond_dict = {}
+            for i, key in zip(range(2, len(data)), self.cfg.MODEL.INPUT_DEP_PREFIXES):
+                cond_dict[key[0]] = data[i].to(self.device)
         return in_data
     
     def _train_epoch(self, i):
@@ -154,8 +156,8 @@ class Trainer:
             })
         else:
             shared_kwargs.update({
-                'penalty_alpha': 0.6, 
-                'top_k': 4,
+                'penalty_alpha': 0.1, 
+                'top_k': 5,
             })
         return shared_kwargs
     
