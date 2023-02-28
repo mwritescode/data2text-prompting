@@ -179,7 +179,7 @@ class Trainer:
             generated = self.model.generate(
                 **in_data, ** gen_kwargs)
             if 'gpt' in self.model.__class__.__name__.lower():
-                generated = generated[:, data[0].length:]
+                generated = generated[:, data[0]['length']:]
             generated = self.tokenizer.batch_decode(generated, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             all_references.extend(references)
             all_generated.extend(generated)
