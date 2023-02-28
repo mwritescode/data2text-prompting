@@ -58,6 +58,7 @@ class Trainer:
             cond_dict = {}
             for i, key in zip(range(2, len(data)), self.cfg.MODEL.INPUT_DEP_PREFIXES):
                 cond_dict[key[0]] = data[i].to(self.device)
+            in_data['conditional_info'] = cond_dict
         return in_data
     
     def _train_epoch(self, i):
