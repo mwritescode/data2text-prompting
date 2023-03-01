@@ -41,4 +41,5 @@ do
     echo "UNSEEN:"; cat webnlg-automatic-evaluation/eval/ter3ref-$TEAMR-new-cat.txt > results/$TEAMR/ter_unseen.txt
 
     python3 print_scores_webnlg.py $TEAMR
+    cd webnlg-automatic-evaluation/
 done
