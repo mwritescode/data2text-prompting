@@ -6,7 +6,7 @@ readarray -t teams < teams_list.txt
 echo "${teams[@]}"
 
 # BLEU
-for team in $teams
+for team in $${teams[@]}
 do 
     export TEAMR=$team
     echo $TEAMR
