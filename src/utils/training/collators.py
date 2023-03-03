@@ -3,9 +3,10 @@ import torch
 from abc import ABC, abstractmethod
 
 class DataCollator(ABC):
-    def __init__(self, has_category=False, tokenizer=None) -> None:
+    def __init__(self, has_category=False, has_polarity=False, tokenizer=None) -> None:
         super().__init__()
         self.has_category = has_category
+        self.has_polarity = has_polarity
         self.tokenizer = tokenizer
 
     def __call__(self, train=True):
@@ -25,6 +26,14 @@ class DataCollator(ABC):
             cat = torch.tensor([elem[2] for elem in batch])
             out = (cat, )
         return out
+    
+    def _optionally_include_polarity(self, batch):
+        out = ()
+        idx = 3 if self.has_category else 2
+        if self.has_polarity:
+            pol = torch.tensor([elem[idx] for elem in batch])
+            out = (pol, )
+        return out
 
 class DataCollatorForDecoderOnlyModel(DataCollator):
     def __init__(self, has_category=False, tokenizer=None, separator='</s>'):
@@ -43,7 +52,7 @@ class DataCollatorForDecoderOnlyModel(DataCollator):
             length = src_tok.length[idx]
             elem[:length] = torch.LongTensor([self.tokenizer.pad_token_id for _ in range(length)])
 
-        out = (input_tok, label_tok) + self._optionally_include_cat(batch)
+        out = (input_tok, label_tok) + self._optionally_include_cat(batch) + self._optionally_include_polarity(batch)
 
         return out
 
@@ -52,7 +61,7 @@ class DataCollatorForDecoderOnlyModel(DataCollator):
         target = [elem[1] for elem in batch]
 
         input_tok = self.tokenizer(input_str, return_tensors='pt', padding=True, return_length=True)
-        out = (input_tok, target) + self._optionally_include_cat(batch)
+        out = (input_tok, target) + self._optionally_include_cat(batch) + self._optionally_include_polarity(batch)
 
         return out
 
@@ -82,7 +91,7 @@ class DataColatorForEncoderDecoderModel(DataCollator):
         input_tok = self.tokenizer(input_str, return_tensors='pt', padding=True)
         label_tok = self.tokenizer(target, return_tensors='pt', padding=True)
 
-        out = (input_tok, label_tok) + self._optionally_include_cat(batch)
+        out = (input_tok, label_tok) + self._optionally_include_cat(batch) + self._optionally_include_polarity(batch)
     
         return out
     
@@ -91,7 +100,7 @@ class DataColatorForEncoderDecoderModel(DataCollator):
         target = [elem[1] for elem in batch]
 
         input_tok = self.tokenizer(input_str, return_tensors='pt', padding=True)
-        out = (input_tok, target) + self._optionally_include_cat(batch)
+        out = (input_tok, target) + self._optionally_include_cat(batch) + self._optionally_include_polarity(batch)
         
         return out
 

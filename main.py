@@ -72,22 +72,28 @@ if __name__ == '__main__':
         tokenizer.add_special_tokens({'pad_token': '<|pad|>'})
         print('len(tokenizer) = ', len(tokenizer))
     
-    dataset_class = USMLESymp
-    if cfg.TRAIN.DATASET == 'webnlg':
-        dataset_class = webNLG
+    dataset_class = webNLG
+    dataset_kwargs = {
+        'include_category': has_category
+    }
+    if cfg.TRAIN.DATASET != 'webngl':
+        dataset_class = USMLESymp
+        dataset_kwargs['include_polarity'] = has_polarity
 
-    data_train = dataset_class('train', include_category=has_category)
-    data_val = dataset_class('dev', include_category=has_category)
-    data_val_expl = dataset_class('dev', explode_dev=True, include_category=has_category)
-    data_test = dataset_class('test', include_category=has_category)
+    data_train = dataset_class('train', **dataset_kwargs)
+    data_val = dataset_class('dev', **dataset_kwargs)
+    data_val_expl = dataset_class('dev', explode_dev=True, **dataset_kwargs)
+    data_test = dataset_class('test', **dataset_kwargs)
 
     separator = tokenizer.decode(model.config.eos_token_id)
     if 'gpt' in cfg.MODEL.PLM:
         collator = DataCollatorForDecoderOnlyModel(
-            has_category=has_category, tokenizer=tokenizer, separator=separator)
+            has_category=has_category, has_polarity=has_polarity, 
+            tokenizer=tokenizer, separator=separator)
     else:
         collator = DataColatorForEncoderDecoderModel(
-            has_category=has_category, tokenizer=tokenizer, t5_preamble=cfg.TRAIN.T5_PREAMBLE)
+            has_category=has_category, has_polarity=has_polarity,
+            tokenizer=tokenizer, t5_preamble=cfg.TRAIN.T5_PREAMBLE)
 
     batch_size = cfg.TRAIN.BATCH_SIZE
     num_workers = cfg.SYSTEM.NUM_WORKERS
