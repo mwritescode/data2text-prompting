@@ -66,7 +66,7 @@ class ControlPrefixEncoder(nn.Module):
                     input_dep_past_key_values = input_dep_past_key_values.repeat_interleave(
                         past_key_values.shape[0] // input_dep_past_key_values.shape[0], dim=0)
 
-                past_key_values = torch.cat([past_key_values, input_dep_past_key_values], dim=1)
+                past_key_values = torch.cat([input_dep_past_key_values, past_key_values], dim=1)
         
         _, seqlen, _ = past_key_values.shape
         past_key_values = past_key_values.view(
