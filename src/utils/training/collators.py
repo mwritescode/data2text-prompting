@@ -36,8 +36,8 @@ class DataCollator(ABC):
         return out
 
 class DataCollatorForDecoderOnlyModel(DataCollator):
-    def __init__(self, has_category=False, tokenizer=None, separator='</s>'):
-        super().__init__(has_category=has_category, tokenizer=tokenizer)
+    def __init__(self, has_category=False, has_polarity=False, tokenizer=None, separator='</s>'):
+        super().__init__(has_category=has_category, has_polarity=has_polarity, tokenizer=tokenizer)
         self.separator = separator
     
     def train_collate_fn(self, batch):
@@ -67,8 +67,8 @@ class DataCollatorForDecoderOnlyModel(DataCollator):
 
 
 class DataColatorForEncoderDecoderModel(DataCollator):
-    def __init__(self, has_category=False, tokenizer=None, t5_preamble='') -> None:
-        super().__init__(has_category=has_category, tokenizer=tokenizer)
+    def __init__(self, has_category=False, has_polarity=False, tokenizer=None, t5_preamble='') -> None:
+        super().__init__(has_category=has_category, has_polarity=has_polarity, tokenizer=tokenizer)
         self.t5_preamble = t5_preamble
         self.is_t5 = 't5' in tokenizer.__class__.__name__.lower()
         
