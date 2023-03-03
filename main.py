@@ -1,4 +1,8 @@
+import os
+import torch
+import random
 import torchinfo
+import numpy as np
 from argparse import ArgumentParser
 from transformers import AutoTokenizer
 from torch.utils.data import DataLoader
@@ -48,14 +52,30 @@ def get_model_from_cfg(cfg):
         model = AutoModelForPrefixPooling.from_config(**model_cfg)
     return model
 
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed) # safe to call even when the GPU is not availabe
+
+    # When running on the CuDNN backend, two further options must be set
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    # Set a fixed value for the hash seed
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    print(f"Random seed set as {seed}")
+
 
 if __name__ == '__main__':
     args = ArgumentParser()
     args.add_argument('config_path', help='Path of the model\'s configuration file')
     args = args.parse_args()
-
+    
     cfg = get_cfg_defaults()
     cfg.merge_from_file(args.config_path)
+    set_seed(seed=cfg.SYSTEM.SEED)
+
 
     input_dep_prefixes = {cat_tuple[0]: cat_tuple[1] for cat_tuple in cfg.MODEL.INPUT_DEP_PREFIXES}
 
