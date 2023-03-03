@@ -96,7 +96,7 @@ if __name__ == '__main__':
     dataset_kwargs = {
         'include_category': has_category
     }
-    if cfg.TRAIN.DATASET != 'webngl':
+    if cfg.TRAIN.DATASET.lower().strip() != 'webnlg':
         dataset_class = USMLESymp
         dataset_kwargs['include_polarity'] = has_polarity
 
