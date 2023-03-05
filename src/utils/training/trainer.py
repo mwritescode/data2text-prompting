@@ -135,7 +135,7 @@ class Trainer:
             shared_kwargs['bad_words_ids'] = [[628], [198]]
         if 'biogpt' in self.model.__class__.__name__.lower():
             shared_kwargs['max_length'] = 500
-            shared_kwargs['min_new_new_tokens'] = 5
+            shared_kwargs['min_new_tokens'] = 5
         if self.cfg.TRAIN.EVAL_GEN_MODE == 'beam':
             shared_kwargs.update({
                 'num_beams': 5,
