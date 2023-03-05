@@ -80,6 +80,8 @@ class BioGPTPrefixPoolWithLMHeadModel(BioGptPreTrainedModel, CustomSavePreTraine
 
     def prepare_inputs_for_generation(self, input_ids, past_key_values=None, **kwargs):
         # only last token for inputs_ids if past is defined in kwargs
+        inputs_embeds = kwargs.get('inputs_embeds', None)
+
         if past_key_values:
             input_ids = input_ids[:, -1].unsqueeze(-1)
         
@@ -98,7 +100,8 @@ class BioGPTPrefixPoolWithLMHeadModel(BioGptPreTrainedModel, CustomSavePreTraine
             "input_ids": input_ids,
             "past_key_values": past_key_values,
             "use_cache": kwargs.get("use_cache"),
-            "attention_mask": attention_mask
+            "attention_mask": attention_mask,
+            "inputs_embeds": inputs_embeds
         }
 
     def forward(
