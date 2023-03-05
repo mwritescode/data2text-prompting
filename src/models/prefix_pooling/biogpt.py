@@ -80,8 +80,6 @@ class BioGPTPrefixPoolWithLMHeadModel(BioGptPreTrainedModel, CustomSavePreTraine
 
     def prepare_inputs_for_generation(self, input_ids, past_key_values=None, **kwargs):
         # only last token for inputs_ids if past is defined in kwargs
-        inputs_embeds = kwargs.get('inputs_embeds', None)
-
         if past_key_values:
             input_ids = input_ids[:, -1].unsqueeze(-1)
         
@@ -100,8 +98,7 @@ class BioGPTPrefixPoolWithLMHeadModel(BioGptPreTrainedModel, CustomSavePreTraine
             "input_ids": input_ids,
             "past_key_values": past_key_values,
             "use_cache": kwargs.get("use_cache"),
-            "attention_mask": attention_mask,
-            "inputs_embeds": inputs_embeds
+            "attention_mask": attention_mask
         }
 
     def forward(
@@ -131,7 +128,7 @@ class BioGPTPrefixPoolWithLMHeadModel(BioGptPreTrainedModel, CustomSavePreTraine
                 attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
 
         labels_for_plm = None if self.config.objective_type == 'sentence' else labels
-        input_ids = None if inputs_embeds is not None else input_ids
+        inputs_embeds = None
 
         transformer_outputs = self.pretrained_model(
             input_ids,
