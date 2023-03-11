@@ -9,11 +9,10 @@
 Generating automatic explanations for the predictions of machine learning models has
 long since been a major challenge in Artificial Intelligence, especially when considering sensible domains like healthcare. In this thesis, we approach the problem of generating a fluent, natural language justification for a medical diagnosis given all the information in the case description and the disease's symptomatology. We treat this problem as a data-to-text task and solve it using prompting techniques for natural language generation. In particular, we propose two architectural modifications to standard Prefix Tuning called Layer Dependency and Prefix Pooling; we evaluate their results, comparing with current state-of-the-art methods for the data-to-text task, on both a general-purpose benchmark (WebNLG) and on a dataset of clinical cases and relative explanations built as part of the ANTIDOTE project. 
 
-
-<figure align="center">
-  <img src="assets/validation_bleu_t5_pooling.png" width="45%" alt="top-5 accuracy">
-  <figcaption>Validation BLEU on WebNLG for model t5-base</figcaption>
-</figure>
+<p align="center">
+  <img src="assets/validation_bleu_t5_pooling.png" width="45%" alt="top-5 accuracy"> <br>
+  Validation BLEU on WebNLG for model t5-base
+</p>
 
 Results show that layer dependency boosts the generation capabilities of our models when training on a limited computational budget, while Prefix Pooling is a valid dynamic prompting technique that achieves performances on par with the current state-of-the-art without requiring any additional information to be associated with the input. Finally, we note how, for our domain and in the context of the ANTIDOTE project, interpreting the explanation-generation task as data-to-text is a viable approach which produces high-quality justifications.
 
