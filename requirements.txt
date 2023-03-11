@@ -8,6 +8,7 @@ nltk
 torchinfo
 gensim
 sacremoses
+secrebleu
 yacs
 wandb
 natsort
