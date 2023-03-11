@@ -14,7 +14,6 @@ from src.config.config import get_cfg_defaults
 
 class Trainer:
     def __init__(self, model, tokenizer, train_loader, val_loader=None, val_loader_gen=None, test_loader=None, device='cuda', cfg=get_cfg_defaults()):
-        self._set_seed(seed=cfg.SYSTEM.SEED)
         self.model = model.to(device)
         self.tokenizer = tokenizer
         self.train_loader = train_loader
@@ -125,20 +124,6 @@ class Trainer:
             wandb_id = checkpoint['wandb_id']
         return starting_epoch, wandb_id
     
-    def _set_seed(self, seed=42):
-        random.seed(seed)
-        np.random.seed(seed)
-        torch.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed) # safe to call even when the GPU is not availabe
-
-        # When running on the CuDNN backend, two further options must be set
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
-
-        # Set a fixed value for the hash seed
-        os.environ["PYTHONHASHSEED"] = str(seed)
-        print(f"Random seed set as {seed}")
-    
     def _get_generation_kwargs(self):
         shared_kwargs = {
             'max_length': 300,
@@ -148,6 +133,9 @@ class Trainer:
         }
         if 'gpt2' in self.model.__class__.__name__.lower():
             shared_kwargs['bad_words_ids'] = [[628], [198]]
+        if 'biogpt' in self.model.__class__.__name__.lower():
+            shared_kwargs['max_length'] = 500
+            shared_kwargs['min_new_tokens'] = 5
         if self.cfg.TRAIN.EVAL_GEN_MODE == 'beam':
             shared_kwargs.update({
                 'num_beams': 5,

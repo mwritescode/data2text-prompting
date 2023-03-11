@@ -128,7 +128,7 @@ class BioGPTPrefixPoolWithLMHeadModel(BioGptPreTrainedModel, CustomSavePreTraine
                 attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
 
         labels_for_plm = None if self.config.objective_type == 'sentence' else labels
-        input_ids = None if inputs_embeds is not None else input_ids
+        inputs_embeds = None
 
         transformer_outputs = self.pretrained_model(
             input_ids,
